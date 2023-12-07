@@ -10,6 +10,10 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
+import { ref } from 'vue';
+
+
+const isDark = ref(false)
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -21,6 +25,17 @@ export default createVuetify({
           secondary: '#5CBBF6',
         },
       },
+      dark: {
+        colors: {
+          primary: '#BB86FC',
+          secondary: '#03DAC6',
+        },
+      },
     },
+    defaultTheme: 'dark',
   },
 })
+
+export function toggleTheme() {
+  isDark.value = !isDark.value;
+}
