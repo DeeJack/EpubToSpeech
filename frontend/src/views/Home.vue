@@ -1,8 +1,11 @@
 <template>
-  <Upload />
+  <!-- <Upload /> -->
+  <!-- <ToSpeechForm /> -->
+  <ReadingPane />
 </template>
 
 <script setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
   import Upload from '@/components/Upload.vue'
+  import ToSpeechForm from '@/components/ToSpeechForm.vue';
+  import ReadingPane from '@/components/ReadingPane.vue';
 </script>
