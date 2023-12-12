@@ -12,19 +12,9 @@
                 <v-textarea v-model="description" label="Description" :rules="[v => !!v || 'Description is required']"
                     required></v-textarea>
 
-                <v-select v-model="service" :items="services" label="Service" :rules="[v => !!v || 'Service is required']"
-                    required></v-select>
-
-                <!-- Add voices select? -->
-
-                <v-data-table :headers="headers" :items="chapters" item-key="id" class="elevation-1" >
-                    <template v-slot:item.selected="{ item }">
-                        <v-checkbox v-model="item.selected"></v-checkbox>
-                    </template>
-                </v-data-table>
-
                 <div class="center">
-                    <v-btn color="primary" type="submit">Create Request</v-btn>
+                    <v-btn color="primary" @click="toReader()">AI Reader</v-btn>
+                    <v-btn color="primary" @click="toTTS()">TTS</v-btn>
                 </div>
             </v-form>
         </v-container>
@@ -39,14 +29,6 @@ let valid = ref(false);
 let title = ref('');
 let author = ref('');
 let description = ref('');
-let service = ref(null);
-let services = ['Azure', 'OpenAI', 'ElevenLabs', 'Local'];
-
-let headers = [
-    { title: 'Select', value: 'selected', sortable: false, width: '10%' },
-    { title: 'Chapter name', value: 'name' },
-];
-let chapters = ref([]); // This should be updated with the chapters from the server
 
 const createRequest = () => {
     if (form.value.validate()) {
@@ -56,24 +38,6 @@ const createRequest = () => {
 
 export default {
     created: () => {
-        // Fetch chapters from server
-        console.log('TEST')
-        chapters.value = [{
-                id: 1,
-                name: 'Chapter 1',
-                selected: false,
-            },
-            {
-                id: 2,
-                name: 'Chapter 2',
-                selected: false,
-            },
-            {
-                id: 3,
-                name: 'Chapter 3',
-                selected: false,
-            },
-        ];
     },
     data: () => ({
         form,
@@ -81,13 +45,15 @@ export default {
         title,
         author,
         description,
-        service,
-        services,
-        headers,
-        chapters,
     }),
     methods: {
         createRequest,
+        toReader() {
+            this.$router.push('/reader')
+        },
+        toTTS() {
+            this.$router.push('/tts')
+        }
     },
 
 }
@@ -95,10 +61,13 @@ export default {
 
 <style scoped>
 .center {
-
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.center button:first-child {
+    margin-right: 10%;
 }
 
 .v-btn {

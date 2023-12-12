@@ -14,13 +14,24 @@ const routes = [
     ],
   },
   {
-    path: '/reading',
+    path: '/reader',
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
-        name: 'Reading',
+        name: 'Reader',
         component: () => import(/* webpackChunkName: "home" */ '@/views/ReadingPane.vue'),
+      },
+    ],
+  },
+  {
+    path: '/option',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Option',
+        component: () => import(/* webpackChunkName: "home" */ '@/views/ToSpeechForm.vue'),
       },
     ],
   },
@@ -31,7 +42,7 @@ const routes = [
       {
         path: '',
         name: 'TTS',
-        component: () => import(/* webpackChunkName: "home" */ '@/views/ToSpeechForm.vue'),
+        component: () => import(/* webpackChunkName: "home" */ '@/views/TTS.vue'),
       },
     ],
   },
