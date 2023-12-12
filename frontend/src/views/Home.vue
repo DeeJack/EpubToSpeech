@@ -1,11 +1,9 @@
 <template>
   <!-- <Upload /> -->
   <!-- <ToSpeechForm /> -->
-  <ReadingPane />
+  <!-- <ReadingPane /> -->
 </template>
 
 <script setup>
-  import Upload from '@/components/Upload.vue'
-  import ToSpeechForm from '@/components/ToSpeechForm.vue';
-  import ReadingPane from '@/components/ReadingPane.vue';
+  // import Upload from '@/components/Upload.vue'
 </script>
