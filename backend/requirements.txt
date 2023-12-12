@@ -1,3 +1,9 @@
 flask
 python-dotenv
 openai
+ebooklib
+bs4
+azure-cognitiveservices-speech
+elevenlabs
+torch
+TTS
