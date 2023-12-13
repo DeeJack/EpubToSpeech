@@ -11,26 +11,21 @@ This project is a web application where users can upload Epub files and use vari
 ## Getting Started
 
 1. Clone the repository
-   ```
+
+   ```cmd
    git clone https://github.com/DeeJack/EpubToSpeech.git
    ```
 
-2. Install the dependencies
-   ```
-   cd backend/
-   pip install -r requirements.txt
+2. Run with docker!
+
+   ```cmd
+   ./start.sh
    ```
 
-3. Run the backend
-   ```
-   python home.py
-   ```
+   OR:
 
-4. Run the frontend
-   ```
-   cd ..
-   cd frontend/
-   npm run dev
+   ```cmd
+   docker-compose up --build
    ```
 
 ## Usage
