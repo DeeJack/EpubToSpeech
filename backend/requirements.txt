@@ -7,3 +7,7 @@ azure-cognitiveservices-speech
 elevenlabs
 torch
 TTS
+flask-swagger
+flask-swagger-ui
+flask-restx
+flask-cors
