@@ -11,4 +11,5 @@ def home():
     return "Hello World!"
 
 if __name__ == '__main__':
-    app.run(debug=True, host=os.environ.get('HOST'), port=os.environ.get('PORT'))
+    # app.run(debug=True, host=os.environ.get('HOST'), port=os.environ.get('PORT'))
+    app.run(debug=True)
