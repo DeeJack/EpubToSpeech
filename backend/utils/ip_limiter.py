@@ -4,6 +4,7 @@ from functools import wraps
 def limit_ip_access(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
+        print('LIMITING IP ACCESS', request.remote_addr)
         # Replace with the IP addresses you want to allow
         allowed_ips = ['127.0.0.1', '192.168.0.1']
 
