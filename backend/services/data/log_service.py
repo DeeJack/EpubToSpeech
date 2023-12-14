@@ -1,8 +1,8 @@
 import utils.ip_limiter
 from datetime import datetime
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, current_app
 from flask_restx import Api, Resource, fields
-import utils.ip_limiter
+import os
 
 log_blueprint = Blueprint("log_blueprint", __name__, url_prefix="/api")
 
@@ -18,7 +18,7 @@ namespace = api.namespace("log", description="Log operations")
 def write_file(file, message):
     message = f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {message}'
     
-    with open(file, 'a') as f:
+    with open(os.path.join(current_app.config['LOG_FOLDER'], file), 'a') as f:
         f.write(message + '\n')
 
 def write_error(message):
