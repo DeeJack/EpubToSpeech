@@ -189,3 +189,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+uploads/*
+static/*
+logs/*
