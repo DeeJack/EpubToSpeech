@@ -9,10 +9,14 @@ from flask_restx import Api, Resource
 from dotenv import load_dotenv
 import os
 
+from services.data.log_service import log_blueprint
+
 load_dotenv()
 
 app = Flask(__name__)
 api = Api(app, doc='/api/docs')
+
+app.register_blueprint(log_blueprint)
 
 @api.route('/api/')
 @api.doc(params={'id': 'An ID'}, description='Get a book by its ID')
