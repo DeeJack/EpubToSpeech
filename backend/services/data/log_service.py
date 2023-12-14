@@ -18,7 +18,7 @@ namespace = api.namespace("log", description="Log operations")
 def write_file(file, message):
     message = f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {message}'
     
-    with open(os.path.join(current_app.config['LOG_FOLDER'], file), 'a') as f:
+    with open(os.path.join(current_app.config['ROOT_FOLDER'], current_app.config['LOG_FOLDER'], file), 'a') as f:
         f.write(message + '\n')
 
 def write_error(message):

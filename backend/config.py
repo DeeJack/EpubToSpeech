@@ -6,3 +6,4 @@ def register_config(app):
     app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
     app.config['FILE_SIZE_MAX'] = 5 * 1024 * 1024 # 5 MB
     app.config['LOG_FOLDER'] = "logs"
+    app.config['ROOT_FOLDER'] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
