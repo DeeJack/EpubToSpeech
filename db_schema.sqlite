@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS books (
+    ID INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    description TEXT NOT NULL,
+    filepath TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS chapters (
+    book_id INTEGER NOT NULL,
+    number INTEGER NOT NULL,
+    filepath TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (book_id, number)
+);
