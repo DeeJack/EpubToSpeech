@@ -11,38 +11,29 @@ import os
 
 import config
 
-from services.data.log_service import log_blueprint
-from services.data.audio_storage_service import file_blueprint
+from services import api
 
 load_dotenv()
 
 app = Flask(__name__)
-api = Api(app, doc='/docs')
+
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+api.init_app(app)
 
 config.register_config(app)
 
-app.register_blueprint(log_blueprint)
-app.register_blueprint(file_blueprint)
-
-@api.route('/api/')
-@api.doc(params={'id': 'An ID'}, description='Get a book by its ID')
-class Home(Resource):
-    def get(self):
-        return {'Hello': 'World'}
-
 # Swagger UI route
-SWAGGER_URL = '/api/docs'
-API_URL = '/swagger.json'
-swaggerui_blueprint = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "My API"
-    }
-)
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+# SWAGGER_URL = '/api/docs'
+# API_URL = '/swagger.json'
+# swaggerui_blueprint = get_swaggerui_blueprint(
+#     SWAGGER_URL,
+#     API_URL,
+#     config={
+#         'app_name': "My API"
+#     }
+# )
+# app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 if __name__ == '__main__':
     # app.run(debug=True, host=os.environ.get('HOST'), port=os.environ.get('PORT'))

@@ -1,5 +1,5 @@
 from flask import Blueprint, Flask, current_app, request
-from flask_restx import Api, Resource, fields, abort
+from flask_restx import Api, Resource, fields, abort, Namespace
 import utils.ip_limiter
 import os
 
@@ -23,17 +23,17 @@ def get_file(filename):
     except:
         abort(500)
         
-file_blueprint = Blueprint('audio_storage_blueprint', __name__, url_prefix='/internal')
-api = Api(
-    file_blueprint,
-    title='Audio Storage Service',
-    version='1.0',
-    description='A service for storing audio files',
-)
+# file_blueprint = Blueprint('audio_storage_blueprint', __name__, url_prefix='/internal')
+# api = Api(
+#     file_blueprint,
+#     title='Audio Storage Service',
+#     version='1.0',
+#     description='A service for storing audio files',
+# )
 
-namespace = api.namespace('audio_storage', description='Audio storage operations')
+audio_namespace = Namespace('audio_storage', description='Audio storage operations')
 
-file = api.model(
+file = audio_namespace.model(
     'file',
     {
         'file': fields.String(required=True, description='The file to store'),
@@ -41,11 +41,11 @@ file = api.model(
     },
 )
 
-@namespace.route('/store-file')
-@api.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Store a file', params={'file': 'The file to store'})
+@audio_namespace.route('/store-file')
+@audio_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Store a file', params={'file': 'The file to store'})
 class StoreFile(Resource):
-    # @namespace.expect(file)
-    # @api.marshal_with(file)
+    @audio_namespace.expect(file)
+    @audio_namespace.marshal_with(file)
     @utils.ip_limiter.limit_ip_access
     def post(self):
         if 'file' not in request.files:
@@ -59,8 +59,8 @@ class StoreFile(Resource):
         save_file(file, filename)
         return 'OK', 200
     
-@namespace.route('/get-file/<string:filename>')
-@api.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Get a file', params={'filename': 'The file to get'})
+@audio_namespace.route('/get-file/<string:filename>')
+@audio_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Get a file', params={'filename': 'The file to get'})
 class GetFile(Resource):
     @utils.ip_limiter.limit_ip_access
     def get(self, filename):

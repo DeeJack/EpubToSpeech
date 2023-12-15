@@ -1,19 +1,19 @@
 import utils.ip_limiter
 from datetime import datetime
 from flask import Blueprint, Flask, current_app
-from flask_restx import Api, Resource, fields
+from flask_restx import Api, Resource, fields, Namespace
 import os
 
-log_blueprint = Blueprint("log_blueprint", __name__, url_prefix="/internal")
+# log_blueprint = Blueprint("log_blueprint", __name__, url_prefix="/internal")
 
-api = Api(
-    log_blueprint,
-    title="Log Service",
-    version="1.0",
-    description="A service for writing logs",
-)
+# api = Api(
+#     log_blueprint,
+#     title="Log Service",
+#     version="1.0",
+#     description="A service for writing logs",
+# )
 
-namespace = api.namespace("log", description="Log operations")
+log_namespace = Namespace("log", description="Log operations")
 
 def write_file(file, message):
     message = f'[{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}] {message}'
@@ -30,39 +30,39 @@ def write_database(query):
 def write_external_api(message):
     write_file('external_api.log', message)
         
-message = api.model(
+message = log_namespace.model(
     "Message",
     {
         "message": fields.String(required=True, description="The message to log"),
     },
 )
 
-@namespace.route("/error")
-@api.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log an error', params={'message': 'The error message'})
+@log_namespace.route("/error")
+@log_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log an error', params={'message': 'The error message'})
 class Error(Resource):
-    @namespace.expect(message)
-    @api.marshal_with(message)
+    @log_namespace.expect(message)
+    @log_namespace.marshal_with(message)
     @utils.ip_limiter.limit_ip_access
     def post(self):
-        write_error(api.payload["message"])
+        write_error(log_namespace.payload["message"])
         return "OK", 200
     
-@namespace.route("/database")
-@api.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log a database query', params={'query': 'The database query'})
+@log_namespace.route("/database")
+@log_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log a database query', params={'query': 'The database query'})
 class Database(Resource):
-    @namespace.expect(message)
-    @api.marshal_with(message)
+    @log_namespace.expect(message)
+    @log_namespace.marshal_with(message)
     @utils.ip_limiter.limit_ip_access
     def post(self):
-        write_database(api.payload["query"])
+        write_database(log_namespace.payload["message"])
         return "OK", 200
     
-@namespace.route("/external_api")
-@api.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log an external API call', params={'message': 'The external API call'})
+@log_namespace.route("/external_api")
+@log_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Log an external API call', params={'message': 'The external API call'})
 class ExternalAPI(Resource):
-    @namespace.expect(message)
-    @api.marshal_with(message)
+    @log_namespace.expect(message)
+    @log_namespace.marshal_with(message)
     @utils.ip_limiter.limit_ip_access
     def post(self):
-        write_external_api(api.payload["message"])
+        write_external_api(log_namespace.payload["message"])
         return "OK", 200

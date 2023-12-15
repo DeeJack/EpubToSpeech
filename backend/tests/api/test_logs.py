@@ -13,7 +13,7 @@ def test_external_api_log(client):
     
 def test_database_log(client):
     response = client.post('/internal/log/database', json={
-        'query': 'Test database query'
+        'message': 'Test database query'
     })
     assert response.status_code == 200
     
