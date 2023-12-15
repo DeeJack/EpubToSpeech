@@ -23,7 +23,7 @@ def get_file(filename):
     except:
         abort(500)
         
-file_blueprint = Blueprint('audio_storage_blueprint', __name__, url_prefix='/api')
+file_blueprint = Blueprint('audio_storage_blueprint', __name__, url_prefix='/internal')
 api = Api(
     file_blueprint,
     title='Audio Storage Service',

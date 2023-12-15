@@ -17,7 +17,9 @@ from services.data.audio_storage_service import file_blueprint
 load_dotenv()
 
 app = Flask(__name__)
-api = Api(app, doc='/api/docs')
+api = Api(app, doc='/docs')
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+
 
 config.register_config(app)
 

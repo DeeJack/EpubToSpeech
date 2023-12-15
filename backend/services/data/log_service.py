@@ -4,7 +4,7 @@ from flask import Blueprint, Flask, current_app
 from flask_restx import Api, Resource, fields
 import os
 
-log_blueprint = Blueprint("log_blueprint", __name__, url_prefix="/api")
+log_blueprint = Blueprint("log_blueprint", __name__, url_prefix="/internal")
 
 api = Api(
     log_blueprint,
