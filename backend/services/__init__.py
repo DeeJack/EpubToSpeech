@@ -2,6 +2,7 @@ from flask_restx import Api
 
 from .data.log_service import log_namespace
 from .data.audio_storage_service import audio_namespace
+from .adapters.sqlite_adapter import sqlite_namespace
 
 api = Api(
     title='Audio Storage API',
@@ -12,3 +13,4 @@ api = Api(
 
 api.add_namespace(log_namespace, path='/internal/log')
 api.add_namespace(audio_namespace, path='/internal/audio_storage')
+api.add_namespace(sqlite_namespace, path='/internal/database')
