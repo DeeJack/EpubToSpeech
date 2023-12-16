@@ -8,6 +8,9 @@ LOG_FOLDER = "logs"
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATABASE_FOLDER = "database"
 DATABASE_FILE = "books.db"
+HOST = '127.0.0.1'
+PORT = 5000
+API_URL = f'http://{HOST}:{PORT}/internal'
 
 def register_config(app):
     app.config['DATABASE'] = DATABASE
@@ -15,3 +18,8 @@ def register_config(app):
     app.config['FILE_SIZE_MAX'] = FILE_SIZE_MAX
     app.config['LOG_FOLDER'] = LOG_FOLDER
     app.config['ROOT_FOLDER'] = ROOT_FOLDER
+    app.config['DATABASE_FOLDER'] = DATABASE_FOLDER
+    app.config['DATABASE_FILE'] = DATABASE_FILE
+    app.config['HOST'] = HOST
+    app.config['PORT'] = PORT
+    app.config['API_URL'] = API_URL
