@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, current_app, request
+from flask import Blueprint, Flask, current_app, request, send_file, make_response
 from flask_restx import Api, Resource, fields, abort, Namespace
 import utils.ip_limiter
 import os
@@ -15,8 +15,14 @@ def get_file(filename):
     if os.path.basename(filename) != filename:
         abort(400)
     try:
-        with open(os.path.join(current_app.config['ROOT_FOLDER'], current_app.config['UPLOAD_FOLDER'], filename), 'rb') as f:
-            return f.read().decode('utf-8')
+        filepath = os.path.join(current_app.config['ROOT_FOLDER'], current_app.config['UPLOAD_FOLDER'], filename)
+        return send_file(filepath, as_attachment=True)
+        # with open(os.path.join(current_app.config['ROOT_FOLDER'], current_app.config['UPLOAD_FOLDER'], filename), 'rb') as f:
+        #     # text = f.read()
+        #     # return text.decode('utf-8')
+        #     return send_file(f, mimetype='', as_attachment=True)
+    except UnicodeDecodeError as e:
+        abort(500)
     except FileNotFoundError as e:
         print(e)
         abort(404)
@@ -31,9 +37,9 @@ def get_file(filename):
 #     description='A service for storing audio files',
 # )
 
-audio_namespace = Namespace('audio_storage', description='Audio storage operations')
+storage_namespace = Namespace('audio_storage', description='Audio storage operations')
 
-file = audio_namespace.model(
+file = storage_namespace.model(
     'file',
     {
         'file': fields.String(required=True, description='The file to store'),
@@ -41,11 +47,11 @@ file = audio_namespace.model(
     },
 )
 
-@audio_namespace.route('/store-file')
-@audio_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Store a file', params={'file': 'The file to store'})
+@storage_namespace.route('/store-file')
+@storage_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Store a file', params={'file': 'The file to store'})
 class StoreFile(Resource):
-    @audio_namespace.expect(file)
-    @audio_namespace.marshal_with(file)
+    @storage_namespace.expect(file)
+    @storage_namespace.marshal_with(file)
     @utils.ip_limiter.limit_ip_access
     def post(self):
         if 'file' not in request.files:
@@ -59,9 +65,9 @@ class StoreFile(Resource):
         save_file(file, filename)
         return 'OK', 200
     
-@audio_namespace.route('/get-file/<string:filename>')
-@audio_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Get a file', params={'filename': 'The file to get'})
+@storage_namespace.route('/get-file/<string:filename>')
+@storage_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Get a file', params={'filename': 'The file to get'})
 class GetFile(Resource):
     @utils.ip_limiter.limit_ip_access
     def get(self, filename):
-        return {'content': get_file(filename)}, 200
+        return get_file(filename)
