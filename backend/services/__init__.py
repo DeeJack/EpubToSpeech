@@ -6,13 +6,13 @@ from .adapters.sqlite_adapter import sqlite_namespace
 from .adapters.epub_adapter import epub_namespace
 
 api = Api(
-    title='Audio Storage API',
+    title='Epub To Speech Services',
     version='1.0',
-    description='A simple audio storage API',
+    description='APIs to convert epub files to speech and other AI services',
     doc='/docs',
 )
 
 api.add_namespace(log_namespace, path='/internal/log')
-api.add_namespace(storage_namespace, path='/internal/audio_storage')
+api.add_namespace(storage_namespace, path='/internal/storage')
 api.add_namespace(sqlite_namespace, path='/internal/database')
 api.add_namespace(epub_namespace, path='/internal/epub')

@@ -37,7 +37,7 @@ def get_file(filename):
 #     description='A service for storing audio files',
 # )
 
-storage_namespace = Namespace('audio_storage', description='Audio storage operations')
+storage_namespace = Namespace('storage', description='Storage operations')
 
 file = storage_namespace.model(
     'file',
