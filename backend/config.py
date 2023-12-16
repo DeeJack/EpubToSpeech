@@ -16,6 +16,7 @@ def register_config(app):
     app.config['DATABASE'] = DATABASE
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['FILE_SIZE_MAX'] = FILE_SIZE_MAX
+    app.config['MAX_CONTENT_LENGTH'] = FILE_SIZE_MAX # flask's max content length
     app.config['LOG_FOLDER'] = LOG_FOLDER
     app.config['ROOT_FOLDER'] = ROOT_FOLDER
     app.config['DATABASE_FOLDER'] = DATABASE_FOLDER

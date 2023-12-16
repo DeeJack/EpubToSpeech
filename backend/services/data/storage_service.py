@@ -97,7 +97,7 @@ class StoreFile(Resource):
         file = request.files["file"]
         filename = request.form["filename"]
 
-        print("MAYBE")
+        print("MAYBE", file, filename)
 
         save_file(file, filename)
         return "OK", 200

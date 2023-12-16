@@ -112,7 +112,7 @@ class EpubBook(Resource):
         file = request.files["file"]
         book_id = request.form["book_id"]
         
-        print('RECEIVED FILE')
+        print('RECEIVED FILE', file.filename)
         
         # Tries to parse the file to make sure it's an epub, also tries to parse the book_id to make sure it's an int
         try:
@@ -123,7 +123,7 @@ class EpubBook(Resource):
         except:
             print('ERROR WHILE PARSING')
             abort(400)
-        
+        file.seek(0)
         print('PARSED')
         
         url = current_app.config["API_URL"]
