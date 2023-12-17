@@ -37,4 +37,4 @@ config.register_config(app)
 
 if __name__ == '__main__':
     # app.run(debug=True, host=os.environ.get('HOST'), port=os.environ.get('PORT'))
-    app.run(debug=True)
+    app.run(debug=True, threaded=Tre)
