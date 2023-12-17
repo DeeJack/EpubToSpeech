@@ -17,6 +17,7 @@ OPENAI_API_KEY = getenv('OPENAI_API_KEY')
 AZURE_TTS_KEY = getenv('AZURE_TTS_KEY')
 AZURE_TTS_REGION = getenv('AZURE_TTS_REGION')
 AZURE_TTS_VOICE = getenv('AZURE_TTS_VOICE')
+ELEVENLABS_API_KEY = getenv('ELEVENLABS_API_KEY')
 
 def register_config(app):
     app.config['DATABASE'] = DATABASE
@@ -34,3 +35,4 @@ def register_config(app):
     app.config['AZURE_TTS_KEY'] = AZURE_TTS_KEY
     app.config['AZURE_TTS_REGION'] = AZURE_TTS_REGION
     app.config['AZURE_TTS_VOICE'] = AZURE_TTS_VOICE
+    app.config['ELEVENLABS_API_KEY'] = ELEVENLABS_API_KEY

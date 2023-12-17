@@ -4,7 +4,7 @@ from flask_restx import Api, Resource, abort, fields, Namespace
 import azure.cognitiveservices.speech as speechsdk
 import os
 import tempfile
-
+import utils.ip_limiter
 
 azure_namespace = Namespace("azure", description="Azure's TTS operations")
 
@@ -85,6 +85,7 @@ def get_audio_buffer(speech_synthesis_result):
 @azure_namespace.route("/tts")
 class TTSService(Resource):
     @azure_namespace.expect(tts_model)
+    @utils.ip_limiter.limit_ip_access
     def post(self):
         """Convert text to speech"""
         data = request.json

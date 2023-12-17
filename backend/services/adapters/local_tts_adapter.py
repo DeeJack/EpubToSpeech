@@ -5,6 +5,7 @@ import torch
 from TTS.api import TTS
 import tempfile
 import os
+import utils.ip_limiter
 
 localtts_namespace = Namespace("local", description="Local TTS operations")
 INITIALIZED = False
@@ -61,6 +62,7 @@ tts_model = localtts_namespace.model(
 @localtts_namespace.route("/tts")
 class TTSService(Resource):
     @localtts_namespace.expect(tts_model)
+    @utils.ip_limiter.limit_ip_access
     def post(self):
         """Convert text to speech"""
         data = request.json
