@@ -1,3 +1,4 @@
+import io
 import utils.ip_limiter
 from flask import Blueprint, Flask, current_app, request, send_file
 from flask_restx import Api, Resource, abort, fields, Namespace
@@ -67,7 +68,7 @@ def create_tts(text):
     """
         TODO: save the audio!
     """
-    return send_file(response, mimetype="audio/wav", as_attachment=True, download_name='tts.wav')
+    return send_file(io.BytesIO(response.content), mimetype="audio/wav", as_attachment=True, download_name='tts.wav')
 
 generation_model = openai_namespace.model("Generation", {
     "prompt": fields.String(required=True, description="Prompt to generate from"),
