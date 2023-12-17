@@ -1,3 +1,5 @@
+import dotenv
+dotenv.load_dotenv()
 from os import getenv
 import os
 
@@ -12,6 +14,9 @@ HOST = '127.0.0.1'
 PORT = 5000
 API_URL = f'http://{HOST}:{PORT}/internal'
 OPENAI_API_KEY = getenv('OPENAI_API_KEY')
+AZURE_TTS_KEY = getenv('AZURE_TTS_KEY')
+AZURE_TTS_REGION = getenv('AZURE_TTS_REGION')
+AZURE_TTS_VOICE = getenv('AZURE_TTS_VOICE')
 
 def register_config(app):
     app.config['DATABASE'] = DATABASE
@@ -26,3 +31,6 @@ def register_config(app):
     app.config['PORT'] = PORT
     app.config['API_URL'] = API_URL
     app.config['OPENAI_API_KEY'] = OPENAI_API_KEY
+    app.config['AZURE_TTS_KEY'] = AZURE_TTS_KEY
+    app.config['AZURE_TTS_REGION'] = AZURE_TTS_REGION
+    app.config['AZURE_TTS_VOICE'] = AZURE_TTS_VOICE
