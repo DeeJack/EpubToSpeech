@@ -5,6 +5,8 @@ from .data.storage_service import storage_namespace
 from .adapters.sqlite_adapter import sqlite_namespace
 from .adapters.epub_adapter import epub_namespace
 from .adapters.gpt_adapter import openai_namespace
+from .adapters.azure_adapter import azure_namespace
+
 
 api = Api(
     title='Epub To Speech Services',
@@ -18,3 +20,4 @@ api.add_namespace(storage_namespace, path='/internal/storage')
 api.add_namespace(sqlite_namespace, path='/internal/database')
 api.add_namespace(epub_namespace, path='/internal/epub')
 api.add_namespace(openai_namespace, path='/internal/openai')
+api.add_namespace(azure_namespace, path='/internal/azure')

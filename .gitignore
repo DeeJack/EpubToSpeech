@@ -194,3 +194,5 @@ uploads/*
 static/*
 logs/*
 database/*
+backend/tests/test_files/tts.wav
+backend/tests/test_files/tts.mp3
