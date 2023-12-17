@@ -11,6 +11,7 @@ DATABASE_FILE = "books.db"
 HOST = '127.0.0.1'
 PORT = 5000
 API_URL = f'http://{HOST}:{PORT}/internal'
+OPENAI_API_KEY = getenv('OPENAI_API_KEY')
 
 def register_config(app):
     app.config['DATABASE'] = DATABASE
@@ -24,3 +25,4 @@ def register_config(app):
     app.config['HOST'] = HOST
     app.config['PORT'] = PORT
     app.config['API_URL'] = API_URL
+    app.config['OPENAI_API_KEY'] = OPENAI_API_KEY

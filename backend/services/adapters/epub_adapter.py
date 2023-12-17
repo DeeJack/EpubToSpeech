@@ -2,9 +2,6 @@ from bs4 import BeautifulSoup
 import utils.ip_limiter
 from flask import Blueprint, Flask, current_app, request
 from flask_restx import Api, Resource, abort, fields, Namespace
-import os
-import sqlite3
-import config
 import tempfile
 from ebooklib import epub
 import ebooklib
