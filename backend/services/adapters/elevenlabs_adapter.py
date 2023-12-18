@@ -5,6 +5,7 @@ import os
 import tempfile
 from elevenlabs import generate, play, save, stream
 import utils.ip_limiter
+import requests
 
 elevenlabs_namespace = Namespace("elevenlabs", description="Elevenlabs TTS operations")
 
@@ -18,6 +19,11 @@ tts_model = elevenlabs_namespace.model(
 )
 
 def generate_tts(text):
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
+        'message': f'[ELEVENLABS] Prompt: {text}'
+    })
+    
     audio = generate(
         text=text,
         voice="Charlie",

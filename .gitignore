@@ -198,3 +198,4 @@ backend/tests/test_files/tts.wav
 backend/tests/test_files/tts.mp3
 backend/tests/test_files/azure_tts.wav
 backend/tests/test_files/tts_local.wav
+backend/tests/test_files/elevenlabs_tts.wav

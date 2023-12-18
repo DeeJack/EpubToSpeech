@@ -19,6 +19,11 @@ openai_namespace = Namespace("openai", description="OpenAI related operations")
 def ask_question(question, pre_prompt):
     openai.api_key = current_app.config["OPENAI_API_KEY"]
     client = OpenAI()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
+        'message': f'[OPENAI GPT] Pre-Prompt: {pre_prompt}, prompt: {question}'
+    })
+    
     response = client.chat.completions.create(
         messages=[
             {
@@ -34,6 +39,7 @@ def ask_question(question, pre_prompt):
         stream=True,
         max_tokens=1000, # 0.001$ per 1000 tokens input, 0.002$ per 1000 tokens output
     )
+    
     answer = ''
     for chunk in response:
         if len(chunk.choices) > 0 and chunk.choices[0].delta is not None and chunk.choices[0].delta.content is not None:
@@ -43,6 +49,11 @@ def ask_question(question, pre_prompt):
 def create_image(prompt):
     openai.api_key = current_app.config["OPENAI_API_KEY"]
     client = OpenAI()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
+        'message': f'[OPENAI DALL-E] Prompt: {prompt}'
+    })
+    
     response = client.images.generate(
         # model="dall-e-3",
         model="dall-e-2",
@@ -58,6 +69,11 @@ def create_image(prompt):
 def create_tts(text):
     openai.api_key = current_app.config["OPENAI_API_KEY"]
     client = OpenAI()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
+        'message': f'[OPENAI TTS] Prompt: {text}'
+    })
+    
     response = client.audio.speech.create(
             model="tts-1",
             voice="echo",

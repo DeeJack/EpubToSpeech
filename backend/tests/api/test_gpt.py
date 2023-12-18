@@ -1,6 +1,6 @@
 def test_generation(client):
-    if True:
-        return
+    # if True:
+    #     return
     response = client.post(
         "internal/openai/text-generation",
         json={"prompt": "Hello.",
@@ -9,6 +9,9 @@ def test_generation(client):
     assert response.status_code == 200
     print(response.json['text'])
     assert response.json["text"].startswith("Yes")
+
+    if True:
+        return
     
     response = client.post(
         "internal/openai/image-generation",

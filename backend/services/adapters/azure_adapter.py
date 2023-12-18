@@ -5,6 +5,7 @@ import azure.cognitiveservices.speech as speechsdk
 import os
 import tempfile
 import utils.ip_limiter
+import requests
 
 azure_namespace = Namespace("azure", description="Azure's TTS operations")
 
@@ -19,6 +20,11 @@ tts_model = azure_namespace.model(
 
 
 def generate_tts(text):
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
+        'message': f'[AZURE GPT] Prompt: {text}'
+    })
+    
     print(current_app.config)
     print(current_app.config["AZURE_TTS_KEY"])
     print(current_app.config["AZURE_TTS_REGION"])
