@@ -45,7 +45,7 @@ class Summarize(Resource):
         if len(text) > 1000:
             abort(400, "Text too long")
         response = requests.post(f'{current_app.config["API_URL"]}/openai/text-generation', json={
-                'pre-prompt': 'Summarize the text given',
+                'pre_prompt': 'Summarize the text given',
                 'prompt': text
             })
         if response.status_code != 200:
@@ -65,7 +65,7 @@ class Translate(Resource):
         if len(text) > 1000:
             abort(400, "Text too long")
         response = requests.post(f'{current_app.config["API_URL"]}/openai/text-generation', json={
-                'pre-prompt': 'Translate the text given in english',
+                'pre_prompt': 'Translate the text given in english',
                 'prompt': text
             })
         if response.status_code != 200:
@@ -90,7 +90,7 @@ class Generate(Resource):
         
         response = requests.post(f'{current_app.config["API_URL"]}/openai/text-generation', json={
                 'prompt': text,
-                'pre-prompt': prompt
+                'pre_prompt': prompt
             })
         if response.status_code != 200:
             return abort(response.status_code, response.json()['message'])
