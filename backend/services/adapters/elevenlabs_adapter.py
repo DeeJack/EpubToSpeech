@@ -51,6 +51,7 @@ def generate_tts(text):
     # return stream(audio)
 
 @elevenlabs_namespace.route("/tts")
+@elevenlabs_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio from Elevenlabs', params={'text': 'The text to be converted to speech'})
 class TTS(Resource):
     @elevenlabs_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access

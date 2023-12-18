@@ -49,6 +49,7 @@ def generate_openai_tts(text):
     return generate_tts(f"{current_app.config['API_URL']}/openai/tts", "openai_tts_output.wav", text)
 
 @tts_namespace.route("/")
+@tts_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio', params={'text': 'The text to be converted to speech', 'service': 'The service to be used'})
 class TTS(Resource):
     @tts_namespace.expect(tts_model)
     def post(self):

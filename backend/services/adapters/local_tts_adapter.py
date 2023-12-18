@@ -60,6 +60,7 @@ tts_model = localtts_namespace.model(
 )
 
 @localtts_namespace.route("/tts")
+@localtts_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Convert text to speech', params={'text': 'The text to be converted to speech'})
 class TTSService(Resource):
     @localtts_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access

@@ -89,6 +89,7 @@ def get_audio_buffer(speech_synthesis_result):
 
 
 @azure_namespace.route("/tts")
+@azure_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio from Azure', params={'text': 'The text to be converted to speech'})
 class TTSService(Resource):
     @azure_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access

@@ -96,6 +96,7 @@ tts_model = openai_namespace.model("TTS", {
 })
 
 @openai_namespace.route("/text-generation")
+@openai_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate text from prompt', params={'prompt': 'The prompt to generate from'})
 class TextGenerate(Resource):
     @openai_namespace.expect(generation_model)
     @utils.ip_limiter.limit_ip_access
@@ -109,6 +110,7 @@ class TextGenerate(Resource):
         return {"text": ask_question(prompt, pre_prompt)}
     
 @openai_namespace.route("/image-generation")
+@openai_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate image from prompt', params={'prompt': 'The prompt to generate from'})
 class ImageGenerate(Resource):
     @openai_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access
@@ -121,6 +123,7 @@ class ImageGenerate(Resource):
         return {"image": create_image(prompt)}
     
 @openai_namespace.route("/tts")
+@openai_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate text to speech from prompt', params={'prompt': 'The prompt to generate from'})
 class TTS(Resource):
     @openai_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access

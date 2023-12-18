@@ -64,6 +64,7 @@ def read_chapters(content, chapters):
 
 
 @epub_namespace.route("/chapters/<string:filepath>")
+@epub_namespace.doc(params={"filepath": "The path to the epub file"})
 class EpubChapters(Resource):
     @epub_namespace.doc("get_chapter_list")
     @utils.ip_limiter.limit_ip_access
@@ -99,6 +100,7 @@ class EpubChapter(Resource):
 
 
 @epub_namespace.route("/store-book")
+@epub_namespace.doc(params={"book_id": "The id of the book"})
 class EpubBook(Resource):
     @epub_namespace.doc("read_chapters")
     @utils.ip_limiter.limit_ip_access
