@@ -55,6 +55,11 @@ def write(query, *values):
 def read(query, *values):
     connection = create_connection()
     cursor = connection.cursor()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
+        'message': f'Query: {query} Values: {values}'
+    })
+    
     try:
         cursor.execute(query, values)
     except Exception as e:
