@@ -8,6 +8,7 @@ from .adapters.gpt_adapter import openai_namespace
 from .adapters.azure_adapter import azure_namespace
 from .adapters.local_tts_adapter import localtts_namespace
 from .adapters.elevenlabs_adapter import elevenlabs_namespace
+from .logic.tts_logic import tts_namespace
 
 api = Api(
     title='Epub To Speech Services',
@@ -24,3 +25,4 @@ api.add_namespace(openai_namespace, path='/internal/openai')
 api.add_namespace(azure_namespace, path='/internal/azure')
 api.add_namespace(localtts_namespace, path='/internal/local')
 api.add_namespace(elevenlabs_namespace, path='/internal/elevenlabs')
+api.add_namespace(tts_namespace, path='/internal/tts')
