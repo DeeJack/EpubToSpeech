@@ -16,7 +16,7 @@ tts_model = tts_namespace.model(
         "text": fields.String(
             required=True, description="The text to be converted to speech"
         ),
-        "service": fields.Integer(
+        "service": fields.String(
             required=True, description="The service to be used", enum=['azure', 'openai', 'elevenlabs', 'local']
         )
     },

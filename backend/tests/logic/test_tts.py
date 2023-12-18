@@ -3,6 +3,12 @@ import os
 def test_tts_logic(client):
     response = client.post('/internal/tts/', json={
         'text': 'Test TTS message',
+        'service': 'asd'
+    })
+    assert response.status_code == 400
+    
+    response = client.post('/internal/tts/', json={
+        'text': 'Test TTS message',
         'service': 'local'
     })
     assert response.status_code == 200
