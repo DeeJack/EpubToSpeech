@@ -5,6 +5,7 @@ from flask_restx import Api, Resource, abort, fields, Namespace
 import os
 import sqlite3
 import config
+import requests
 
 """
     This is the adapter for the SQLite database.
@@ -40,6 +41,11 @@ with open(os.path.join(config.ROOT_FOLDER, "db_schema.sqlite")) as f:
 def write(query, *values):
     conn = create_connection()
     cur = conn.cursor()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
+        'message': f'Query: {query} Values: {values}'
+    })
+    
     cur.execute(query, values)
     conn.commit()
     conn.close()
