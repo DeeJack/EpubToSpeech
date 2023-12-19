@@ -38,7 +38,7 @@ def read_chapter(content, number):
         chapters_raw = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
 
         if number < 0 or number >= len(chapters_raw):
-            return None
+            return abort(400, message="Invalid chapter number")
         
         text = chapters_raw[number].get_content().decode("utf-8")
         
@@ -52,12 +52,12 @@ def read_chapters(content, chapters):
     with tempfile.NamedTemporaryFile(delete=True) as f:
         f.write(content)
         book = ebooklib.epub.read_epub(f.name)
-        chapters_raw = book.get_items_of_type(ebooklib.ITEM_DOCUMENT)
+        chapters_raw = list(book.get_items_of_type(ebooklib.ITEM_DOCUMENT))
 
         result = []
         for chapter in chapters:
             if chapter < 0 or chapter >= len(chapters_raw):
-                result.append(None)
+                continue
             else:
                 result.append(chapters_raw[chapter].get_content())
         return result
@@ -82,7 +82,7 @@ class EpubChapters(Resource):
         return get_chapter_list(response.content), 200
 
 
-@epub_namespace.route("/chapter/<string:filepath>/<int:chapter_number>")
+@epub_namespace.route("/chapters/<string:filepath>/<int:chapter_number>")
 class EpubChapter(Resource):
     @epub_namespace.doc("read_chapter")
     @utils.ip_limiter.limit_ip_access
@@ -116,12 +116,14 @@ class EpubBook(Resource):
         
         # Tries to parse the file to make sure it's an epub, also tries to parse the book_id to make sure it's an int
         try:
-            with tempfile.NamedTemporaryFile(delete=False) as f:
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.epub') as f:
                 f.write(file.read())
                 book = epub.read_epub(f.name)
+                print('OK')
                 metadata['title'] = book.get_metadata('DC', 'title')[0][0]
                 metadata['author'] = book.get_metadata('DC', 'creator')[0][0]
-        except:
+        except Exception as e:
+            print(e)
             print('ERROR WHILE PARSING')
             abort(400)
         file.seek(0)

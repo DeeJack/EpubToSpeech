@@ -202,3 +202,6 @@ backend/tests/test_files/elevenlabs_tts.wav
 backend/tests/test_files/local_tts2.wav
 backend/tests/test_files/elevenlabs_tts.wav
 backend/tests/test_files/large_file
+backend/tests/test_files/test2 - Copy.epub
+backend/tests/test_files/test3.epub
+backend/tests/test_files/process_tts.wav

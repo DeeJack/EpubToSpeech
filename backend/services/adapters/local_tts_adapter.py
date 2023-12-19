@@ -39,6 +39,7 @@ def get_audio_buffer(tts, text):
     
     # Save the audio to the temporary file
     clone_folder = os.path.join(current_app.config["ROOT_FOLDER"], 'static', "clone.mp3")
+    print(text)
     tts.tts_to_file(text=text, speaker_wav=clone_folder, language="en", file_path=temp_file_path)
     
     # Read the bytes from the file
