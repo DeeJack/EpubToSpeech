@@ -6,7 +6,7 @@ def test_epub(client):
     # assert response.status_code == 200
     
 
-    with open(os.path.join(os.getcwd(), 'tests', 'test_files', 'test.epub'), 'rb') as f:
+    with open(os.path.join(os.path.dirname(__file__), '..',  'test_files', 'test.epub'), 'rb') as f:
         response = client.post("/internal/epub/store-book", data={"file": f, "book_id": "0"})
         assert response.status_code == 200
         assert response.json != []

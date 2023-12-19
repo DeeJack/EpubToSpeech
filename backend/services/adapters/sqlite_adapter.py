@@ -76,7 +76,7 @@ book = sqlite_namespace.model(
         "title": fields.String(required=True, description="The book title"),
         "author": fields.String(required=True, description="The author of the book"),
         "description": fields.String(
-            required=True, description="The description of the book"
+            required=False, description="The description of the book"
         ),
         "filepath": fields.String(
             required=True, description="The path for the .epub file"
@@ -110,11 +110,14 @@ class AddBook(Resource):
     @sqlite_namespace.marshal_with(book_id)
     @utils.ip_limiter.limit_ip_access
     def post(self):
+        description = ''
+        if 'description' in sqlite_namespace.payload:
+            description = sqlite_namespace.payload['description']
         id = write(
             f"INSERT INTO books (title, author, description, filepath) VALUES (?, ?, ?, ?);",
             sqlite_namespace.payload["title"],
             sqlite_namespace.payload["author"],
-            sqlite_namespace.payload["description"],
+            description,
             sqlite_namespace.payload["filepath"],
         )
         return {"id": id}, 201

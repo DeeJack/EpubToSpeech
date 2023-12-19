@@ -119,8 +119,8 @@ class EpubBook(Resource):
             with tempfile.NamedTemporaryFile(delete=False) as f:
                 f.write(file.read())
                 book = epub.read_epub(f.name)
-                metadata['title'] = book.get_metadata('DC', 'title')
-                metadata['author'] = book.get_metadata('DC', 'creator')
+                metadata['title'] = book.get_metadata('DC', 'title')[0][0]
+                metadata['author'] = book.get_metadata('DC', 'creator')[0][0]
         except:
             print('ERROR WHILE PARSING')
             abort(400)
