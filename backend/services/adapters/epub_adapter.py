@@ -100,7 +100,7 @@ class EpubChapter(Resource):
 
 
 @epub_namespace.route("/store-book")
-@epub_namespace.doc(params={"book_id": "The id of the book"})
+@epub_namespace.doc(params={"filename": "The filename of the book", "file": "The epub file"})
 class EpubBook(Resource):
     @epub_namespace.doc("read_chapters")
     @utils.ip_limiter.limit_ip_access
@@ -109,16 +109,18 @@ class EpubBook(Resource):
         Get a chapter of a book
         """
         file = request.files["file"]
-        book_id = request.form["book_id"]
+        filename = request.form["filename"]
+        metadata = {}
         
         print('RECEIVED FILE', file.filename)
         
         # Tries to parse the file to make sure it's an epub, also tries to parse the book_id to make sure it's an int
         try:
-            book_id = int(book_id)
             with tempfile.NamedTemporaryFile(delete=False) as f:
                 f.write(file.read())
                 book = epub.read_epub(f.name)
+                metadata['title'] = book.get_metadata('DC', 'title')
+                metadata['author'] = book.get_metadata('DC', 'creator')
         except:
             print('ERROR WHILE PARSING')
             abort(400)
@@ -129,7 +131,7 @@ class EpubBook(Resource):
         print('URL:', f'{url}/storage/store-file')
         print(file.filename)
         files = {'file': file}
-        values = {'filename': f'{book_id}.epub'}
+        values = {'filename': f'{filename}.epub'}
         response = requests.post(
             f"{url}/storage/store-file",
             files=files,
@@ -144,4 +146,4 @@ class EpubBook(Resource):
         if response.status_code != 200:
             abort(response.status_code)
 
-        return {}, 200
+        return metadata, 200
