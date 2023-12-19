@@ -201,3 +201,4 @@ backend/tests/test_files/tts_local.wav
 backend/tests/test_files/elevenlabs_tts.wav
 backend/tests/test_files/local_tts2.wav
 backend/tests/test_files/elevenlabs_tts.wav
+backend/tests/test_files/large_file

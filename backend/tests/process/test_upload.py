@@ -22,3 +22,12 @@ def test_upload(client):
             }
         )
         assert response.status_code != 200
+    
+    with open(os.path.join(os.path.dirname(__file__), '..',  'test_files', 'large_file'), 'rb') as f:
+        response = client.post(
+            '/api/upload/',
+            data={
+                'file': f
+            }
+        )
+        assert response.status_code != 200

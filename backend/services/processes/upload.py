@@ -28,6 +28,11 @@ class Upload(Resource):
         """
         file = request.files["file"]
         
+        # Check the size of the file
+        if len(file.read()) > current_app.config["FILE_SIZE_MAX"]:
+            abort(400, "File too large")
+        file.seek(0)
+        
         url = current_app.config["API_URL"]
         files = {'file': file}
         
