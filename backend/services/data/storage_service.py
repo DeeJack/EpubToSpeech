@@ -72,7 +72,7 @@ upload_parser.add_argument("filename", location="form", type=str, required=True)
 @storage_namespace.doc(
     responses={200: "OK", 400: "Invalid Argument", 500: "Mapping Key Error"},
     description="Store a file",
-    params={"file": "The file to store"},
+    params={"file": "The file to store", "filename": "The name of the file to store"},
 )
 class StoreFile(Resource):
     # @storage_namespace.expect(file)
