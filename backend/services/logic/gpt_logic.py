@@ -73,7 +73,7 @@ class Translate(Resource):
         return response.json()
     
 @gptlogic_namespace.route("/generate")
-@gptlogic_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate text from prompt', params={'prompt': 'The prompt to be processed'})
+@gptlogic_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate text from prompt', params={'prompt': 'The prompt for GPT', 'text': 'The text to be processed'})
 class Generate(Resource):
     @gptlogic_namespace.expect(generate_model)
     @gptlogic_namespace.expect(text_model)

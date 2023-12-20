@@ -95,8 +95,10 @@ class EpubChapter(Resource):
 
         if response.status_code != 200:
             abort(response.status_code)
-
-        return read_chapter(response.content, chapter_number), 200
+        chapter = {
+            'text': read_chapter(response.content, chapter_number)
+        }
+        return chapter, 200
 
 
 @epub_namespace.route("/store-book")
