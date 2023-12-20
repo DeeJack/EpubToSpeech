@@ -157,7 +157,7 @@ class AddBook(Resource):
 )
 class GetBook(Resource):
     @sqlite_namespace.expect(book_id)
-    @sqlite_namespace.marshal_with(book, as_list=False, skip_none=True)
+    # @sqlite_namespace.marshal_with(book, as_list=False, skip_none=True)
     @utils.ip_limiter.limit_ip_access
     def get(self, id):
         rows = read("SELECT * FROM books WHERE ID = ?;", id)
@@ -282,14 +282,15 @@ class SearchBook(Resource):
     @sqlite_namespace.marshal_with(book, as_list=True, skip_none=True)
     @utils.ip_limiter.limit_ip_access
     def get(self):
+        print('BEFORE SEARCH')
         args = keywords_parser.parse_args()
         if "keywords" not in args:
             return "No keywords provided", 400
-        keywords = args["keywords"]
+        keywords = args["keywords"].lower()
         title_search = "%" + keywords + "%"
         description_search = "%" + keywords + "%"
         rows = read(
-            "SELECT * FROM books WHERE title LIKE ? OR description LIKE ?;",
+            "SELECT * FROM books WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?;",
             title_search,
             description_search,
         )
@@ -301,7 +302,6 @@ class SearchBook(Resource):
                 "title": result[1],
                 "author": result[2],
                 "description": result[3],
-                "filepath": result[4],
             }
             for result in rows
         ]

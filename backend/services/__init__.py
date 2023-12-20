@@ -13,6 +13,7 @@ from .logic.gpt_logic import gptlogic_namespace
 from .processes.upload import upload_namespace
 from .processes.tts import tts_namespace as tts_process_namespace
 from .processes.update_book import info_namespace
+from .processes.search import search_namespace
 
 api = Api(
     title='Epub To Speech Services',
@@ -36,3 +37,4 @@ api.add_namespace(gptlogic_namespace, path='/internal/gpt')
 api.add_namespace(upload_namespace, path='/api/upload')
 api.add_namespace(tts_process_namespace, path='/api/tts')
 api.add_namespace(info_namespace, path='/api/update_info')
+api.add_namespace(search_namespace, path='/api/search')
