@@ -26,6 +26,7 @@
 
 <script>
 import { ref } from 'vue';
+import axios from 'axios';
 
 let form = ref(null);
 let valid = ref(false);
@@ -35,9 +36,6 @@ let id = ref('');
 let description = ref('');
 
 const createRequest = () => {
-    if (form.value.validate()) {
-        // Implement your request creation logic here
-    }
 };
 
 export default {
@@ -57,7 +55,22 @@ export default {
         this.id = args.id
     },
     methods: {
-        createRequest,
+        createRequest() {
+            if (valid.value) {
+                const formData = new FormData();
+                formData.append('title', this.title);
+                formData.append('author', this.author);
+                formData.append('description', this.description);
+                formData.append('book_id', this.id);
+                axios.put('http://localhost:5000/api/update_info/', formData, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                }).then((response) => {
+                    console.log(response.data)
+                })
+            }
+        },
         toReader() {
             this.$router.push('/reader')
         },
