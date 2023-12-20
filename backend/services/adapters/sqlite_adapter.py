@@ -45,10 +45,13 @@ def write(query, *values):
     response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
         'message': f'Query: {query} Values: {values}'
     })
-    
-    cur.execute(query, values)
-    conn.commit()
-    conn.close()
+    try:
+        cur.execute(query, values)
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(e)
+        abort(400)
     return cur.lastrowid
 
 
@@ -66,6 +69,24 @@ def read(query, *values):
         print(e)
         abort(400)
     rows = cursor.fetchall()
+    connection.close()
+    return rows
+
+def update(query, *values):
+    connection = create_connection()
+    cursor = connection.cursor()
+    
+    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
+        'message': f'Query: {query} Values: {values}'
+    })
+    
+    try:
+        cursor.execute(query, values)
+        connection.commit()
+    except Exception as e:
+        print(e)
+        abort(400)
+    rows = cursor.rowcount
     connection.close()
     return rows
 
@@ -156,6 +177,45 @@ class GetBook(Resource):
             "filepath": result[4],
         }
         return book, 200
+    
+update_book_model = sqlite_namespace.model(
+    "UpdateBook",
+    {
+        "title": fields.String(required=True, description="The book title"),
+        "author": fields.String(required=True, description="The author of the book"),
+        "description": fields.String(
+            required=False, description="The description of the book"
+        ),
+    },
+)
+
+@sqlite_namespace.route("/update-book/<string:id>")
+@sqlite_namespace.doc(
+    responses={
+        200: "OK",
+        400: "Invalid Argument",
+        404: "Book not found",
+        500: "Mapping Key Error",
+    },
+    description="Update a book in the database",
+    params={"id": "The book ID", "title": "The book title", "author": "The author of the book", "description": "The description of the book"},
+)
+class UpdateBook(Resource):
+    @sqlite_namespace.expect(update_book_model)
+    @utils.ip_limiter.limit_ip_access
+    def post(self, id):
+        title = sqlite_namespace.payload["title"]
+        author = sqlite_namespace.payload["author"]
+        description = sqlite_namespace.payload["description"]
+        update_rows = update("UPDATE books SET title = ?, author = ?, description = ? WHERE ID = ?", title, author, description, id)
+        if update_rows == 0:
+            return abort(404, "Book not found")
+        if update_rows > 1:
+            print("SQL INJECTION???")
+            # request('POST', '/internal/log/error', json={
+            # 'message': f'SQL Injection!!'}, headers={})
+            return abort(500, "Internal Error")
+        return {}, 200
 
 
 # For the project it's fine for it to be one user, so I can get the last book uploaded
