@@ -24,19 +24,52 @@
     </v-container>
 </template>
   
-<script setup>
+<script>
 import { ref } from 'vue';
+import axios from 'axios';
 
 let search = ref('');
 let file = ref(null);
 let loading = ref(false);
 let progress = ref(0);
 
-const handleFileUpload = () => {
-    loading.value = true;
-    // Implement your file upload logic here
-    // Update the progress.value as the file uploads
-};
+export default {
+    name: 'Upload',
+    setup() {
+        return {
+            search,
+            file,
+            loading,
+            progress,
+        }
+    },
+    methods: {
+        handleFileUpload() {
+            loading.value = true;
+
+            const formData = new FormData();
+            console.log(file.value[0])
+            formData.append('file', file.value[0]);
+
+            axios.post('http://localhost:5000/api/upload/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                onUploadProgress: (progressEvent) => {
+                    progress.value = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                }
+            }).then((response) => {
+                loading.value = false;
+                progress.value = 100;
+                console.log(response.data)
+                this.$router.push({path: '/form', query: { id: response.data.id, title: response.data.title, author: response.data.author  }})
+            }).catch(() => {
+                loading.value = false;
+                progress.value = 0;
+            });
+        }
+    }
+}
 </script>
 
 <style scoped>

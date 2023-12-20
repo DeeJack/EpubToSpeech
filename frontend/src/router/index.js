@@ -25,12 +25,12 @@ const routes = [
     ],
   },
   {
-    path: '/option',
+    path: '/form',
     component: () => import('@/layouts/default/Default.vue'),
     children: [
       {
         path: '',
-        name: 'Option',
+        name: 'Form',
         component: () => import(/* webpackChunkName: "home" */ '@/views/ToSpeechForm.vue'),
       },
     ],

@@ -9,10 +9,13 @@
                 <v-text-field v-model="author" label="Author" :rules="[v => !!v || 'Author is required']"
                     required></v-text-field>
 
-                <v-textarea v-model="description" label="Description" :rules="[v => !!v || 'Description is required']"
-                    required></v-textarea>
-
+                <v-textarea v-model="description" label="Description"></v-textarea>
+                
                 <div class="center">
+                    <v-btn color="primary" type="submit">Save</v-btn>
+                </div>
+
+                <div class="center more-btn">
                     <v-btn color="primary" @click="toReader()">AI Reader</v-btn>
                     <v-btn color="primary" @click="toTTS()">TTS</v-btn>
                 </div>
@@ -28,6 +31,7 @@ let form = ref(null);
 let valid = ref(false);
 let title = ref('');
 let author = ref('');
+let id = ref('');
 let description = ref('');
 
 const createRequest = () => {
@@ -46,6 +50,12 @@ export default {
         author,
         description,
     }),
+    created() {
+        const args = this.$route.query
+        this.title = args.title
+        this.author = args.author
+        this.id = args.id
+    },
     methods: {
         createRequest,
         toReader() {
@@ -66,8 +76,11 @@ export default {
     align-items: center;
 }
 
-.center button:first-child {
-    margin-right: 10%;
+.more-btn {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20%; /* Adjust the percentage as needed */
 }
 
 .v-btn {
