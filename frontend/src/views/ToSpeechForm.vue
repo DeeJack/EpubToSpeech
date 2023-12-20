@@ -72,10 +72,10 @@ export default {
             }
         },
         toReader() {
-            this.$router.push('/reader')
+            this.$router.push({path: '/reader', query: {id: this.id}})
         },
         toTTS() {
-            this.$router.push('/tts')
+            this.$router.push({path: '/tts', query: {id: this.id}})
         }
     },
 
