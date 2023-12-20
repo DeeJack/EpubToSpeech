@@ -29,6 +29,7 @@
 <script >
 import { nextTick } from 'vue';
 import { ref } from 'vue';
+import axios from 'axios';
 
 let text = ref('');
 let prompt = ref('');
@@ -40,6 +41,9 @@ let summarizeTooltip = ref('Summarize the entire text');
 let triviaTooltip = ref('Generate trivia from the chapter');
 // let chapterTextara = ref(null);
 let selectedText = ref('');
+
+let id = ref(0);
+let chapter = ref(1);
 
 const translate = () => {
     // Implement your translation logic here
@@ -85,9 +89,15 @@ export default {
             // chapterTextara
         };
     },
-    created: async () => {
-        await nextTick();
+    created() {
+        this.id = this.$route.query.id;
+        this.chapter = this.$route.query.chapter || 1;
         // Fetch text from server
+        axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
+            text.value = response.data.text;
+        }).catch((error) => {
+            console.log(error);
+        });
         text.value = 'This is a test text';
     },
     methods: {
