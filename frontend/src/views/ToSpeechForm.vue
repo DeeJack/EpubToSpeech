@@ -35,9 +35,6 @@ let author = ref('');
 let id = ref('');
 let description = ref('');
 
-const createRequest = () => {
-};
-
 export default {
     created: () => {
     },

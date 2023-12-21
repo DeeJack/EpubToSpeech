@@ -11,7 +11,7 @@
                     <div class="buttons">
                         <v-btn color="primary" @click="translate" :title="translateTooltip">Translate</v-btn>
                         <v-btn color="primary" @click="summarize" :title="summarizeTooltip">Summarize</v-btn>
-                        <v-btn color="primary" @click="trivia" :title="triviaTooltip">Trivia</v-btn>
+                        <!-- <v-btn color="primary" @click="trivia" :title="triviaTooltip">Trivia</v-btn>-->
                         <v-btn color="primary" @click="generateImage" :title="generateImageTooltip">Generate Image</v-btn>
                         <v-btn color="primary" @click="customPrompt" :title="customPromptTooltip">Custom Prompt</v-btn>
                     </div>
@@ -45,15 +45,6 @@ let selectedText = ref('');
 let id = ref(0);
 let chapter = ref(1);
 
-const translate = () => {
-    // Implement your translation logic here
-};
-
-const generateImage = () => {
-    // Implement your image generation logic here
-    getSelectedText();
-};
-
 const getSelectedText = () => {
     let text = '';
     if (window.getSelection) {
@@ -79,14 +70,10 @@ export default {
             text,
             prompt,
             result,
-            translate,
-            generateImage,
-            // customPrompt,
             translateTooltip,
             generateImageTooltip,
             customPromptTooltip,
             selectedText,
-            // chapterTextara
         };
     },
     created() {
@@ -98,27 +85,53 @@ export default {
         }).catch((error) => {
             console.log(error);
         });
-        text.value = 'This is a test text';
+        // text.value = 'This is a test text';
     },
     methods: {
-        customPrompt() {
-            console.log(getSelectedText())
-        },
         startSelection() {
             document.addEventListener('selectionchange', selectionListener)
         },
         stopSelection() {
             document.removeEventListener('selectionchange', selectionListener)
         },
+        customPrompt() {
+            axios.post(`http://localhost:5000/api/reader/generate/${id}/${chapter}/`, {
+                prompt: this.prompt,
+            }).then((response) => {
+                console.log(response.data)
+                result.value = response.data.choices[0].text;
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
         summarize() {
-            // Implement your summarization logic here
+            axios.post(`http://localhost:5000/api/reader/summarize/${id}/${chapter}/`)
+            .then((response) => {
+                console.log(response.data)
+                result.value = response.data.choices[0].text;
+            }).catch((error) => {
+                console.log(error);
+            });
         },
-        trivia() {
-            // Implement your trivia logic here
+        translate() {
+            axios.post(`http://localhost:5000/api/reader/translate/${id}/${chapter}/`)
+            .then((response) => {
+                console.log(response.data)
+                result.value = response.data.choices[0].text;
+            }).catch((error) => {
+                console.log(error);
+            });
         },
-        requestGptResponse(prompt) {
-
-        }
+        generateImage() {
+            axios.post(`http://localhost:5000/api/reader/image/`, {
+                prompt: getSelectedText(),
+            }).then((response) => {
+                console.log(response.data)
+                result.value = response.data.choices[0].text;
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
     }
 };
 </script>
