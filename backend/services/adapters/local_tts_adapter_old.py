@@ -1,25 +1,29 @@
 import io
 from flask import Flask, request, current_app, make_response, send_file
 from flask_restx import Api, Resource, abort, fields, Namespace
-import pyttsx3 
+import torch
+from TTS.api import TTS
 import tempfile
 import os
 import utils.ip_limiter
 
 localtts_namespace = Namespace("local", description="Local TTS operations")
 INITIALIZED = False
-engine = None
+tts = None
 
 def initialize_tts():
-    global engine
-    engine = pyttsx3.init()
+    # Get device
+    global tts
+    global INITIALIZED
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # Init TTS
+    tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
     INITIALIZED = True
 
 def local_tts(text):
-    global engine
     if not INITIALIZED:
         initialize_tts()
-    buffer = get_audio_buffer(engine, text)
+    buffer = get_audio_buffer(tts, text)
     return send_file(
         io.BytesIO(buffer),
         mimetype="audio/wav",
@@ -27,15 +31,16 @@ def local_tts(text):
         download_name="local_tts_output.wav",
     )
     
-def get_audio_buffer(engine, text):
+def get_audio_buffer(tts, text):
     # Create a temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     temp_file_path = temp_file.name
     temp_file.close()
     
     # Save the audio to the temporary file
-    engine.save_to_file(text, temp_file_path)
-    engine.runAndWait()
+    clone_folder = os.path.join(current_app.config["ROOT_FOLDER"], 'static', "clone.mp3")
+    print(text)
+    tts.tts_to_file(text=text, speaker="Ana Florence", language="en", file_path=temp_file_path)
     
     # Read the bytes from the file
     with open(temp_file_path, 'rb') as f:

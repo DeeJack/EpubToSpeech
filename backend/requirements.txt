@@ -5,10 +5,9 @@ ebooklib
 bs4
 azure-cognitiveservices-speech
 elevenlabs
-torch
-TTS
 flask-swagger
 flask-swagger-ui
 flask-restx
 flask-cors
 pytest
+py3-tts 
