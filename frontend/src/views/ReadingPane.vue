@@ -1,6 +1,13 @@
 <template>
-    <v-main>
+    <v-main style="padding: 0">
         <v-container>
+            <v-row>
+                <v-col cols="12" >
+                    <v-select v-model="chapter" :items="chapters" item-value="id" item-title="name" label="Chapter"
+                        outlined @update:model-value="changeChapter()"></v-select>
+                </v-col>
+
+            </v-row>
             <v-row>
                 <v-col cols="12" md="6" class="reading">
                     <v-textarea ref="chapterText" height="100" auto-grow hide-details v-model="text" label="" readonly
@@ -43,7 +50,8 @@ let triviaTooltip = ref('Generate trivia from the chapter');
 let selectedText = ref('');
 
 let id = ref(0);
-let chapter = ref(1);
+let chapter = {id: 0, name: ''};
+let chapters = []
 
 const getSelectedText = () => {
     let text = '';
@@ -73,7 +81,11 @@ export default {
             translateTooltip,
             generateImageTooltip,
             customPromptTooltip,
+            summarizeTooltip,
+            triviaTooltip,
             selectedText,
+            chapters,
+            chapter
         };
     },
     created() {
@@ -82,6 +94,21 @@ export default {
         // Fetch text from server
         axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
             text.value = response.data.text;
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        axios.get(`http://localhost:5000/api/reader/chapters/${this.id}`)
+        .then((response) => {
+            let index = 0;
+            this.chapters = response.data.map((chapter) => {
+                return {
+                    id: index++,
+                    name: this.getChapterName(chapter),
+                }
+            });
+            this.chapter = this.chapters[0];
+            console.log(chapters.value)
         }).catch((error) => {
             console.log(error);
         });
@@ -95,7 +122,7 @@ export default {
             document.removeEventListener('selectionchange', selectionListener)
         },
         customPrompt() {
-            axios.post(`http://localhost:5000/api/reader/generate/${id}/${chapter}/`, {
+            axios.post(`http://localhost:5000/api/reader/generate/${this.id}/${this.chapter}/`, {
                 prompt: this.prompt,
             }).then((response) => {
                 console.log(response.data)
@@ -105,22 +132,22 @@ export default {
             });
         },
         summarize() {
-            axios.post(`http://localhost:5000/api/reader/summarize/${id}/${chapter}/`)
-            .then((response) => {
-                console.log(response.data)
-                result.value = response.data.choices[0].text;
-            }).catch((error) => {
-                console.log(error);
-            });
+            axios.post(`http://localhost:5000/api/reader/summarize/${this.id}/${this.chapter}/`)
+                .then((response) => {
+                    console.log(response.data)
+                    result.value = response.data.choices[0].text;
+                }).catch((error) => {
+                    console.log(error);
+                });
         },
         translate() {
-            axios.post(`http://localhost:5000/api/reader/translate/${id}/${chapter}/`)
-            .then((response) => {
-                console.log(response.data)
-                result.value = response.data.choices[0].text;
-            }).catch((error) => {
-                console.log(error);
-            });
+            axios.post(`http://localhost:5000/api/reader/translate/${this.id}/${this.chapter}/`)
+                .then((response) => {
+                    console.log(response.data)
+                    result.value = response.data.choices[0].text;
+                }).catch((error) => {
+                    console.log(error);
+                });
         },
         generateImage() {
             axios.post(`http://localhost:5000/api/reader/image/`, {
@@ -132,6 +159,17 @@ export default {
                 console.log(error);
             });
         },
+        changeChapter() {
+            console.log(this.chapter)
+            axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
+                text.value = response.data.text;
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
+        getChapterName(chapter) {
+            return chapter.split('/').pop().replace('.xhtml', '').replace('.html', '')
+        }
     }
 };
 </script>
