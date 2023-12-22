@@ -2,8 +2,8 @@
     <v-container style="display: grid" dark>
         <v-row>
             <v-col cols="12">
-                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search files" single-line
-                    hide-details></v-text-field>
+                <v-text-field v-model="searchKey" append-icon="mdi-magnify" label="Search files" single-line
+                    hide-details @click:append="search()" @keydown.enter="search()"></v-text-field>
             </v-col>
         </v-row>
         <v-row justify="center">
@@ -28,7 +28,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-let search = ref('');
+let searchKey = ref('');
 let file = ref(null);
 let loading = ref(false);
 let progress = ref(0);
@@ -37,7 +37,7 @@ export default {
     name: 'Upload',
     setup() {
         return {
-            search,
+            searchKey,
             file,
             loading,
             progress,
@@ -67,6 +67,9 @@ export default {
                 loading.value = false;
                 progress.value = 0;
             });
+        },
+        search() {
+            this.$router.push({path: '/search', query: { key: searchKey.value }})
         }
     }
 }

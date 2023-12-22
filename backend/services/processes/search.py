@@ -52,4 +52,42 @@ class Search(Resource):
             return abort(response.status_code)
         books = response.json()
         
-        return books, 200
+        chap_per_books = {}
+        
+        for book in books:
+            if book['id'] not in chap_per_books:
+                chap_per_books[book['id']] = {
+                    'title': book['title'],
+                    'author': book['author'],
+                    'description': book['description'],
+                    'chapters': []
+                }
+            chap_per_books[book['id']]['chapters'].append(book['chapter_number'])
+        
+        return chap_per_books, 200
+    
+@search_namespace.route("/download/<int:book_id>/<int:chapter>")
+@search_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Download API endpoint', params={'book_id': 'The book id', 'chapter': 'The chapter number'})
+class Download(Resource):
+    def get(self, book_id, chapter):
+        """
+            Download API endpoint
+        """
+        # Send the search query to the database service
+        url = current_app.config["API_URL"]
+        response = requests.get(f"{url}/database/get-chapter/{book_id}/{chapter}")
+        if response.status_code != 200:
+            return abort(response.status_code)
+        chapter_path = response.json()['filepath']
+        
+        response = requests.get(f"{url}/storage/get-file/{chapter_path}")
+        if response.status_code != 200:
+            return abort(response.status_code)
+        
+        # Create a response
+        return send_file(
+            io.BytesIO(response.content),
+            mimetype="audio/wav",
+            as_attachment=True,
+            download_name=f"chapter_{chapter}.wav",
+        )

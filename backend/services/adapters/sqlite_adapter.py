@@ -290,7 +290,10 @@ class SearchBook(Resource):
         title_search = "%" + keywords + "%"
         description_search = "%" + keywords + "%"
         rows = read(
-            "SELECT * FROM books WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?;",
+            """SELECT b.ID, b.title, b.author, b.description, c.number
+                FROM books b
+                INNER JOIN chapters c ON books.ID = chapters.book_id
+                WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?;""",
             title_search,
             description_search,
         )
@@ -302,6 +305,7 @@ class SearchBook(Resource):
                 "title": result[1],
                 "author": result[2],
                 "description": result[3],
+                "chapter_number": result[4],
             }
             for result in rows
         ]

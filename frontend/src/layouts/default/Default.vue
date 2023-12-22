@@ -6,8 +6,8 @@
       <v-spacer></v-spacer>
 
       <v-btn to="/">Upload</v-btn>
-      <v-btn :to="'/tts?id=' + this.$route.query.id" v-if="this.$route.query.id">TTS</v-btn>
-      <v-btn :to="'/reader?id=' + this.$route.query.id" v-if="this.$route.query.id">Reader</v-btn>
+      <v-btn :to="'/tts?id=' + $route.query.id" v-if="$route.query.id">TTS</v-btn>
+      <v-btn :to="'/reader?id=' + $route.query.id" v-if="$route.query.id">Reader</v-btn>
     </v-app-bar>
 
     <default-view />

@@ -46,6 +46,29 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/search',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'Search',
+        component: () => import(/* webpackChunkName: "home" */ '@/views/Search'),
+      },
+    ],
+  },
+  {
+    // Not found handler
+    path: '/:pathMatch(.*)*',
+    component: () => import('@/layouts/default/Default.vue'),
+    children: [
+      {
+        path: '',
+        name: 'NotFound',
+        component: () => import('@/views/NotFound.vue'),
+      },
+    ],
+  }
 ]
 
 const router = createRouter({
