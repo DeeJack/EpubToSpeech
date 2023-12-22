@@ -7,11 +7,9 @@
                     <v-card-text>
                         <v-list>
                             <v-list-item v-for="(chapter, index) in book.chapters" :key="index">
-                                <v-list-item-content>{{ chapter.name }}</v-list-item-content>
-                                <v-list-item-action>
-                                    <v-btn @click="downloadChapter(book.id, chapter)">Download</v-btn>
-                                    <v-progress-linear v-if="chapter.downloading" :value="chapter.progress" />
-                                </v-list-item-action>
+                                <v-list-item-content>Chapter {{ chapter.number }}</v-list-item-content>
+                                <v-btn @click="downloadChapter(book.id, chapter)">Download</v-btn>
+                                <v-progress-linear v-if="chapter.downloading" :value="chapter.progress" />
                             </v-list-item>
                         </v-list>
                     </v-card-text>
@@ -40,7 +38,19 @@ export default {
             }
         }).then((response) => {
             console.log(response.data)
-            this.books = response.data
+            this.books = response.data.map(book => {
+                book.chapters = book.chapters.map(chapter => {
+                    let item = {
+                        number: chapter,
+                        downloading: false,
+                        progress: 0
+                    }
+                    return item;
+                });
+                console.log(book);
+                return book;
+            });
+            console.log(this.books)
         }).catch((error) => {
             console.error(error)
         });
@@ -48,7 +58,7 @@ export default {
     methods: {
         downloadChapter(book_id, chapter) {
             chapter.downloading = true;
-            axios.get(`http://localhost:5000/api/search/download/${book_id}/${chapter}/`,
+            axios.get(`http://localhost:5000/api/search/download/${book_id}/${chapter.number}`,
                 {
                     responseType: 'blob',
                     onDownloadProgress: (progressEvent) => {
@@ -59,7 +69,7 @@ export default {
                     const url = window.URL.createObjectURL(new Blob([response.data]));
                     const link = document.createElement('a');
                     link.href = url;
-                    link.setAttribute('download', 'file'); // or any other extension
+                    link.setAttribute('download', `chapter_${chapter.number}.wav`);
                     document.body.appendChild(link);
                     link.click();
                     chapter.downloading = false;

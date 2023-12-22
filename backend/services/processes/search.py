@@ -6,6 +6,7 @@ import tempfile
 from ebooklib import epub
 import ebooklib
 import uuid
+from itertools import groupby
 
 """
     Public API endpoint to search for books.
@@ -52,17 +53,25 @@ class Search(Resource):
             return abort(response.status_code)
         books = response.json()
         
-        chap_per_books = {}
+        chap_per_books = []
         
-        for book in books:
-            if book['id'] not in chap_per_books:
-                chap_per_books[book['id']] = {
-                    'title': book['title'],
-                    'author': book['author'],
-                    'description': book['description'],
-                    'chapters': []
-                }
-            chap_per_books[book['id']]['chapters'].append(book['chapter_number'])
+        if len(books) == 0:
+            return [], 200
+        
+        print(books)
+        
+        chap_per_books = []
+
+        for book_id, group in groupby(books, key=lambda x: x['id']):
+            group_list = list(group)
+            current_book = {
+                'id': group_list[0]['id'],
+                'title': group_list[0]['title'],
+                'author': group_list[0]['author'],
+                'description': group_list[0]['description'],
+                'chapters': [book['chapter_number'] for book in group_list]
+            }
+            chap_per_books.append(current_book)
         
         return chap_per_books, 200
     

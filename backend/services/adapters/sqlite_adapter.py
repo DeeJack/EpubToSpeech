@@ -279,7 +279,7 @@ class DeleteBook(Resource):
 )
 class SearchBook(Resource):
     @sqlite_namespace.expect(keywords_parser)
-    @sqlite_namespace.marshal_with(book, as_list=True, skip_none=True)
+    # @sqlite_namespace.marshal_with(book, as_list=True, skip_none=True)
     @utils.ip_limiter.limit_ip_access
     def get(self):
         print('BEFORE SEARCH')
@@ -292,14 +292,14 @@ class SearchBook(Resource):
         rows = read(
             """SELECT b.ID, b.title, b.author, b.description, c.number
                 FROM books b
-                INNER JOIN chapters c ON books.ID = chapters.book_id
+                INNER JOIN chapters c ON b.ID = c.book_id
                 WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?;""",
             title_search,
             description_search,
         )
         if len(rows) == 0:
             return [], 404
-        rows = [
+        results = [
             {
                 "id": result[0],
                 "title": result[1],
@@ -309,7 +309,8 @@ class SearchBook(Resource):
             }
             for result in rows
         ]
-        return rows, 200
+        print(results)
+        return results, 200
 
 
 chapter = sqlite_namespace.model(

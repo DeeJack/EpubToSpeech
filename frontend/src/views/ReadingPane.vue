@@ -67,10 +67,6 @@ const selectionListener = () => {
     selectedText.value = getSelectedText();
 };
 
-// const customPrompt = () => {
-//     // Implement your custom prompt logic here
-// };
-
 export default {
     name: 'ReadingPane',
     data() {
