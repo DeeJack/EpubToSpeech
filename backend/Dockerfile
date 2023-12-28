@@ -8,6 +8,8 @@ ENV HOST=0.0.0.0
 # Set the working directory
 WORKDIR /app
 
+RUN mkdir -p database
+
 # Copy the requirements file to install dependencies
 COPY requirements.txt requirements.txt
 

@@ -33,6 +33,7 @@ def create_connection():
 
 
 SCHEMA_FILE_NAME = "db_schema.sqlite"
+# Print all files in the root folder
 with open(os.path.join(config.ROOT_FOLDER, "db_schema.sqlite")) as f:
     connection = create_connection()
     connection.executescript(f.read())

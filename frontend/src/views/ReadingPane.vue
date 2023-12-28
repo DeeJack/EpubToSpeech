@@ -122,7 +122,7 @@ export default {
                 prompt: this.prompt,
             }).then((response) => {
                 console.log(response.data)
-                result.value = response.data.choices[0].text;
+                result.value = response.data;
             }).catch((error) => {
                 console.log(error);
             });
@@ -131,7 +131,7 @@ export default {
             axios.post(`http://localhost:5000/api/reader/summarize/${this.id}/${this.chapter}/`)
                 .then((response) => {
                     console.log(response.data)
-                    result.value = response.data.choices[0].text;
+                    result.value = response.data;
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -140,7 +140,7 @@ export default {
             axios.post(`http://localhost:5000/api/reader/translate/${this.id}/${this.chapter}/`)
                 .then((response) => {
                     console.log(response.data)
-                    result.value = response.data.choices[0].text;
+                    result.value = response.data;
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -150,7 +150,7 @@ export default {
                 prompt: getSelectedText(),
             }).then((response) => {
                 console.log(response.data)
-                result.value = response.data.choices[0].text;
+                result.value = response.data;
             }).catch((error) => {
                 console.log(error);
             });
@@ -158,7 +158,7 @@ export default {
         changeChapter() {
             console.log(this.chapter)
             axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
-                text.value = response.data.text;
+                text.value = response.data;
             }).catch((error) => {
                 console.log(error);
             });
