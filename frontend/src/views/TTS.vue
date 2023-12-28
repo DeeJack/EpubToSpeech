@@ -20,7 +20,7 @@
             </v-form>
 
             <div v-for="(audio, index) in downloadedChapters" :key="index" class="audiobox">
-                <h3>Chapter {{ index + 1 }}</h3>
+                <h3>Chapter {{ audio.chapter }}</h3>
                 <audio controls :src="audio.url"></audio>
             </div>
         </v-container>
@@ -99,12 +99,12 @@ export default {
                     'chapter': chapterNumber,
                     'service': service.toLowerCase(),
                     'book_id': id
-                }, { responseType: 'arraybuffer' })
+                }, { responseType: 'arraybuffer', timeout: 60000 })
                 if (response.status == 200) {
                     // console.log(response.data);
                     const blob = new Blob([response.data], { type: 'audio/wav' });
                     const url = URL.createObjectURL(blob);
-                    downloadedChapters.value.push({ url });
+                    downloadedChapters.value.push({ url: url, chapter: chapterNumber });
                 } else {
                     console.log(response);
                 }

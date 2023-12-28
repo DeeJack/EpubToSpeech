@@ -1,4 +1,5 @@
 import io
+from time import sleep
 from flask import Flask, request, current_app, make_response, send_file
 from flask_restx import Api, Resource, abort, fields, Namespace
 import pyttsx3 
@@ -17,9 +18,12 @@ def initialize_tts():
 
 def local_tts(text):
     global engine
+    print('Local TTS')
     if not INITIALIZED:
         initialize_tts()
+    print('Initialized')
     buffer = get_audio_buffer(engine, text)
+    print('Sending file')
     return send_file(
         io.BytesIO(buffer),
         mimetype="audio/wav",
@@ -34,15 +38,28 @@ def get_audio_buffer(engine, text):
     temp_file.close()
     
     # Save the audio to the temporary file
+    os.remove(temp_file_path)
     engine.save_to_file(text, temp_file_path)
     engine.runAndWait()
+    
+    times = 0
+    while times < 15 and os.path.basename(temp_file_path) not in os.listdir(os.path.dirname(temp_file_path)):
+        times += 1
+        print(times)
+        sleep(0.5)
+    
+    if times == 15:
+        return abort(500, message="Error creating the audio file!")
     
     # Read the bytes from the file
     with open(temp_file_path, 'rb') as f:
         audio_buffer = f.read()
+        
+    print('File size: ', len(audio_buffer))
     
     # Delete the temporary file
     os.remove(temp_file_path)
+    engine.stop()
     
     return audio_buffer
 
@@ -62,6 +79,7 @@ class TTSService(Resource):
     @utils.ip_limiter.limit_ip_access
     def post(self):
         """Convert text to speech"""
+        print('Local TTS')
         data = request.json
         text = data["text"]
 

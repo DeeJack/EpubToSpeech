@@ -158,7 +158,7 @@ export default {
         changeChapter() {
             console.log(this.chapter)
             axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
-                text.value = response.data;
+                text.value = response.data.text;
             }).catch((error) => {
                 console.log(error);
             });

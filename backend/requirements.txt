@@ -10,4 +10,5 @@ flask-swagger-ui
 flask-restx
 flask-cors
 pytest
+wheel
 py3-tts 

@@ -2,7 +2,7 @@
     <v-main>
         <v-container>
             <h1 class="formTitle">Epub to Voice</h1>
-            <v-form ref="form" v-model="valid" @submit.prevent="createRequest">
+            <v-form ref="form" :key="0" v-model="valid" @submit.prevent="createRequest">
                 <v-text-field v-model="title" label="Title" :rules="[v => !!v || 'Title is required']"
                     required></v-text-field>
 

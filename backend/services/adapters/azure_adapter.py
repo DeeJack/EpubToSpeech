@@ -29,6 +29,7 @@ def generate_tts(text):
     print(current_app.config["AZURE_TTS_KEY"])
     print(current_app.config["AZURE_TTS_REGION"])
     print(current_app.config["AZURE_TTS_VOICE"])
+    print('---- Azure TTS ----')
     # https://learn.microsoft.com/it-it/azure/ai-services/speech-service/how-to-speech-synthesis?tabs=browserjs%2Cterminal&pivots=programming-language-python
     speech_config = speechsdk.SpeechConfig(
         subscription=current_app.config["AZURE_TTS_KEY"],
@@ -39,13 +40,15 @@ def generate_tts(text):
     # "en-US-JennyNeural"
     # Voices: https://learn.microsoft.com/it-it/azure/ai-services/speech-service/language-support?tabs=tts#prebuilt-neural-voices
     speech_config.speech_synthesis_voice_name = current_app.config["AZURE_TTS_VOICE"]
+    speech_config.set_property(speechsdk.PropertyId.Speech_LogFilename, os.path.join(current_app.config["ROOT_FOLDER"], current_app.config["LOG_FOLDER"], "azure_tts.log"))
     speech_config.set_speech_synthesis_output_format(speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm)
-
+    print('---- Azure TTS 2 ----')
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
     # speech_config=speech_config, audio_config=stream_config)
     speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
+    print('---- Azure TTS 3 ----', speech_synthesis_result.reason, speech_synthesis_result.cancellation_details)
     if (
         speech_synthesis_result.reason
         == speechsdk.ResultReason.SynthesizingAudioCompleted
@@ -98,5 +101,9 @@ class TTSService(Resource):
         data = request.json
         text = data["text"]
 
-        # Checks result.
-        return generate_tts(text)
+        try:
+            return generate_tts(text)
+        except Exception as e:
+            print(e)
+            abort(500, message="Error generating TTS audio!")
+        abort(500, message="Error generating TTS audio!")
