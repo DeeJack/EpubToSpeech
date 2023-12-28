@@ -4,7 +4,7 @@ This project is a web application where users can upload Epub files and use vari
 
 ## Technologies Used
 
-- Frontend: HTML & CSS
+- Frontend: VueJS with Vuetify
 - Backend: Python with Flask
 - Supported TTS Services: Azure, OpenAI, ElevenLabs, and a local one
 
@@ -31,6 +31,37 @@ This project is a web application where users can upload Epub files and use vari
 ## Usage
 
 1. Navigate to the home page and upload an Epub file.
-2. Select the TTS service you want to use.
-3. Select the chapters you want to translate to voice.
-4. If you want, you can also use the GPT API to request information about the chapter or generate images.
+2. Insert in the form the information you want
+3. Select the process you need: TTS or the AI Reader.
+
+### TTS
+
+1. Select the service to use (Azure, OpenAI, ElevenLabs, Local)
+2. Choose the chapters to generate from the table.
+
+### Reader
+
+1. Select the chapter to read from the select element.
+2. Use the buttons to do the actions (Translate, Image generation)
+
+# Example images
+
+## Home - Upload
+
+![Home/Upload](images/upload.jpeg)
+
+## Form
+
+![Form](images/form.jpeg)
+
+## TTS
+
+![TTS](images/tts.jpeg)
+
+## AI Reader
+
+![Reader](images/reader.jpeg)
+
+## Search
+
+![Search](images/search.jpeg)
