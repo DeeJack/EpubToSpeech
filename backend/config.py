@@ -19,6 +19,15 @@ AZURE_TTS_REGION = getenv('AZURE_TTS_REGION')
 AZURE_TTS_VOICE = getenv('AZURE_TTS_VOICE')
 ELEVENLABS_API_KEY = getenv('ELEVENLABS_API_KEY')
 
+if not os.path.exists(os.path.join(ROOT_FOLDER, UPLOAD_FOLDER)):
+    os.makedirs(os.path.join(ROOT_FOLDER, UPLOAD_FOLDER))
+    
+if not os.path.exists(os.path.join(ROOT_FOLDER, LOG_FOLDER)):
+    os.makedirs(os.path.join(ROOT_FOLDER, LOG_FOLDER))
+    
+if not os.path.exists(os.path.join(ROOT_FOLDER, DATABASE_FOLDER)):
+    os.makedirs(os.path.join(ROOT_FOLDER, DATABASE_FOLDER))
+
 def register_config(app):
     app.config['DATABASE'] = DATABASE
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

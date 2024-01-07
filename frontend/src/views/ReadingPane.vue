@@ -86,7 +86,7 @@ export default {
     },
     created() {
         this.id = this.$route.query.id;
-        this.chapter = this.$route.query.chapter || 1;
+        this.chapter = this.$route.query.chapter || 0;
         // Fetch text from server
         axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
             text.value = response.data.text;
@@ -103,7 +103,7 @@ export default {
                     name: this.getChapterName(chapter),
                 }
             });
-            this.chapter = this.chapters[0];
+            this.chapter = this.chapters[0].id;
             console.log(chapters.value)
         }).catch((error) => {
             console.log(error);
@@ -118,29 +118,29 @@ export default {
             document.removeEventListener('selectionchange', selectionListener)
         },
         customPrompt() {
-            axios.post(`http://localhost:5000/api/reader/generate/${this.id}/${this.chapter.id}/`, {
+            axios.post(`http://localhost:5000/api/reader/generate/${this.id}/${this.chapter}`, {
                 prompt: this.prompt,
             }).then((response) => {
                 console.log(response.data)
-                result.value = response.data;
+                result.value = response.data.text;
             }).catch((error) => {
                 console.log(error);
             });
         },
         summarize() {
-            axios.post(`http://localhost:5000/api/reader/summarize/${this.id}/${this.chapter.id}/`)
+            axios.post(`http://localhost:5000/api/reader/summarize/${this.id}/${this.chapter}`)
                 .then((response) => {
                     console.log(response.data)
-                    result.value = response.data;
+                    result.value = response.data.text;
                 }).catch((error) => {
                     console.log(error);
                 });
         },
         translate() {
-            axios.post(`http://localhost:5000/api/reader/translate/${this.id}/${this.chapter.id}/`)
+            axios.post(`http://localhost:5000/api/reader/translate/${this.id}/${this.chapter}`)
                 .then((response) => {
                     console.log(response.data)
-                    result.value = response.data;
+                    result.value = response.data.text;
                 }).catch((error) => {
                     console.log(error);
                 });
@@ -150,14 +150,14 @@ export default {
                 prompt: getSelectedText(),
             }).then((response) => {
                 console.log(response.data)
-                result.value = response.data;
+                result.value = response.data.image;
             }).catch((error) => {
                 console.log(error);
             });
         },
         changeChapter() {
             console.log(this.chapter)
-            axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter.id}`).then((response) => {
+            axios.get(`http://localhost:5000/api/reader/chapter/${this.id}/${this.chapter}`).then((response) => {
                 text.value = response.data.text;
             }).catch((error) => {
                 console.log(error);

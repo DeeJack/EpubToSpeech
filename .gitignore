@@ -205,3 +205,9 @@ backend/tests/test_files/large_file
 backend/tests/test_files/test2 - Copy.epub
 backend/tests/test_files/test3.epub
 backend/tests/test_files/process_tts.wav
+
+backend/static/*
+backend/uploads/*
+backend/logs/*
+backend/database/*
+backend/database/
