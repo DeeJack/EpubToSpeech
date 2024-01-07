@@ -1,19 +1,23 @@
 <template>
     <v-container>
         <v-row>
-            <v-col v-for="(book, index) in books" :key="index" cols="12">
+            <v-col v-for="(book, index) in books" :key="index" cols="12" v-if="books.length">
                 <v-card>
                     <v-card-title>{{ book.title }} - {{ book.author }}</v-card-title>
                     <v-card-text>
-                        <v-list>
+                        <v-list v-if="book.chapters.length">
                             <v-list-item v-for="(chapter, index) in book.chapters" :key="index">
                                 <v-list-item-content>Chapter {{ chapter.number }}</v-list-item-content>
                                 <v-btn @click="downloadChapter(book.id, chapter)">Download</v-btn>
                                 <v-progress-linear v-if="chapter.downloading" :value="chapter.progress" />
                             </v-list-item>
                         </v-list>
+                        <v-alert v-else type="info">No chapters found</v-alert>
                     </v-card-text>
                 </v-card>
+            </v-col>
+            <v-col v-else>
+                <v-alert type="info">No books found</v-alert>
             </v-col>
         </v-row>
     </v-container>

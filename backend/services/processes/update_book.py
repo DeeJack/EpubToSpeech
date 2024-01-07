@@ -41,7 +41,9 @@ class Info(Resource):
         author = request.json["author"]
         description = request.json["description"]
         
-        if len(title) == 0 or len(author) == 0 or len(description) == 0:
+        print(book_id, title, author, description)
+        
+        if len(title) == 0 or len(author) == 0:
             return abort(400, "Invalid Argument")
         
         if len(title) > 100 or len(author) > 100 or len(description) > 1000:
