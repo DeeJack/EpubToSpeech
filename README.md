@@ -66,9 +66,13 @@ This project is a web application where users can upload Epub files and use vari
 
 ![Search](images/search.jpeg)
 
-## Examples
+## Example TTS
 
-![Example](images/example.gif)
+![TTS](images/tts.gif)
+
+## Example Reader
+
+![Reader](images/reader.gif)
 
 ## Search vid
 
