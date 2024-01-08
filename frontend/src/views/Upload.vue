@@ -43,6 +43,9 @@ export default {
             progress,
         }
     },
+    created () {
+        this.file = null
+    },
     methods: {
         handleFileUpload() {
             loading.value = true;

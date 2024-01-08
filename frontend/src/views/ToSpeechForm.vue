@@ -50,6 +50,7 @@ export default {
         this.title = args.title
         this.author = args.author
         this.id = args.id
+        this.description = ''
     },
     methods: {
         createRequest() {

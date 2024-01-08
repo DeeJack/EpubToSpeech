@@ -56,6 +56,7 @@ export default {
         }
     },
     created() {
+        this.downloadedChapters = [];
         let args = this.$route.query;
         let id = args.id;
         // Fetch chapters from server
@@ -66,12 +67,12 @@ export default {
                     let chapterName = chapter.split('/').pop();
                     chapterName = chapterName.replace('.xhtml', '');
                     chapterName = chapterName.replace('.html', '')
-                    index++;
                     let chap = {
                         'number': index,
                         'name': chapterName,
                         'selected': false
                     }
+                    index++;
                     return chap
                 });
                 chapters.value = data;
