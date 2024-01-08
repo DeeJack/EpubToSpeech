@@ -16,9 +16,6 @@ import requests
 """
 epub_namespace = Namespace("epub", description="Epub related operations")
 
-"""
-    
-"""
 
 def get_chapter_list(content):
     with tempfile.NamedTemporaryFile(delete=False) as f:
@@ -39,10 +36,10 @@ def read_chapter(content, number):
 
         if number < 0 or number >= len(chapters_raw):
             return abort(400, message="Invalid chapter number")
-        
+
         text = chapters_raw[number].get_content().decode("utf-8")
-        
-        parser = BeautifulSoup(text, 'html.parser')
+
+        parser = BeautifulSoup(text, "html.parser")
         text = parser.get_text()
 
         return text
@@ -64,7 +61,10 @@ def read_chapters(content, chapters):
 
 
 @epub_namespace.route("/chapters/<string:filepath>")
-@epub_namespace.doc(params={"filepath": "The path to the epub file"})
+@epub_namespace.doc(
+    params={"filepath": "The path to the epub file"},
+    description="Get the list of chapters of a book",
+)
 class EpubChapters(Resource):
     @epub_namespace.doc("get_chapter_list")
     @utils.ip_limiter.limit_ip_access
@@ -75,7 +75,6 @@ class EpubChapters(Resource):
         url = current_app.config["API_URL"]
         response = requests.get(f"{url}/storage/get-file/{filepath}")
 
-
         if response.status_code != 200:
             abort(response.status_code)
 
@@ -83,6 +82,13 @@ class EpubChapters(Resource):
 
 
 @epub_namespace.route("/chapters/<string:filepath>/<int:chapter_number>")
+@epub_namespace.doc(
+    params={
+        "filepath": "The path to the epub file",
+        "chapter_number": "The number of the chapter to read",
+    },
+    description="Get a chapter of a book",
+)
 class EpubChapter(Resource):
     @epub_namespace.doc("read_chapter")
     @utils.ip_limiter.limit_ip_access
@@ -95,14 +101,15 @@ class EpubChapter(Resource):
 
         if response.status_code != 200:
             abort(response.status_code)
-        chapter = {
-            'text': read_chapter(response.content, chapter_number)
-        }
+        chapter = {"text": read_chapter(response.content, chapter_number)}
         return chapter, 200
 
 
 @epub_namespace.route("/store-book")
-@epub_namespace.doc(params={"filename": "The filename of the book", "file": "The epub file"})
+@epub_namespace.doc(
+    params={"filename": "The filename of the book", "file": "The epub file"},
+    description="Store a book",
+)
 class EpubBook(Resource):
     @epub_namespace.doc("read_chapters")
     @utils.ip_limiter.limit_ip_access
@@ -113,39 +120,24 @@ class EpubBook(Resource):
         file = request.files["file"]
         filename = request.form["filename"]
         metadata = {}
-        
-        print('RECEIVED FILE', file.filename)
-        
+
         # Tries to parse the file to make sure it's an epub, also tries to parse the book_id to make sure it's an int
         try:
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.epub') as f:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".epub") as f:
                 f.write(file.read())
                 book = epub.read_epub(f.name)
-                print('OK')
-                metadata['title'] = book.get_metadata('DC', 'title')[0][0]
-                metadata['author'] = book.get_metadata('DC', 'creator')[0][0]
+                metadata["title"] = book.get_metadata("DC", "title")[0][0]
+                metadata["author"] = book.get_metadata("DC", "creator")[0][0]
         except Exception as e:
             print(e)
-            print('ERROR WHILE PARSING')
+            print("ERROR WHILE PARSING")
             abort(400)
         file.seek(0)
-        print('PARSED')
-        
+
         url = current_app.config["API_URL"]
-        print('URL:', f'{url}/storage/store-file')
-        print(file.filename)
-        files = {'file': file}
-        values = {'filename': f'{filename}.epub'}
-        response = requests.post(
-            f"{url}/storage/store-file",
-            files=files,
-            data=values
-            # headers= {
-            #     "Content-Type": "multipart/form-data",
-            # }
-        )
-        
-        print('RECEIVED RESPONSE', response.status_code)
+        files = {"file": file}
+        values = {"filename": f"{filename}.epub"}
+        response = requests.post(f"{url}/storage/store-file", files=files, data=values)
 
         if response.status_code != 200:
             abort(response.status_code)

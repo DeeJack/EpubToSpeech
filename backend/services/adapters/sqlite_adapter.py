@@ -33,7 +33,6 @@ def create_connection():
 
 
 SCHEMA_FILE_NAME = "db_schema.sqlite"
-# Print all files in the root folder
 with open(os.path.join(config.ROOT_FOLDER, "db_schema.sqlite")) as f:
     connection = create_connection()
     connection.executescript(f.read())
@@ -42,10 +41,11 @@ with open(os.path.join(config.ROOT_FOLDER, "db_schema.sqlite")) as f:
 def write(query, *values):
     conn = create_connection()
     cur = conn.cursor()
-    
-    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
-        'message': f'Query: {query} Values: {values}'
-    })
+
+    response = requests.post(
+        f"{current_app.config['API_URL']}/log/database",
+        json={"message": f"Query: {query} Values: {values}"},
+    )
     try:
         cur.execute(query, values)
         conn.commit()
@@ -59,11 +59,12 @@ def write(query, *values):
 def read(query, *values):
     connection = create_connection()
     cursor = connection.cursor()
-    
-    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
-        'message': f'Query: {query} Values: {values}'
-    })
-    
+
+    response = requests.post(
+        f"{current_app.config['API_URL']}/log/database",
+        json={"message": f"Query: {query} Values: {values}"},
+    )
+
     try:
         cursor.execute(query, values)
     except Exception as e:
@@ -73,14 +74,16 @@ def read(query, *values):
     connection.close()
     return rows
 
+
 def update(query, *values):
     connection = create_connection()
     cursor = connection.cursor()
-    
-    response = requests.post(f"{current_app.config['API_URL']}/log/database", json={
-        'message': f'Query: {query} Values: {values}'
-    })
-    
+
+    response = requests.post(
+        f"{current_app.config['API_URL']}/log/database",
+        json={"message": f"Query: {query} Values: {values}"},
+    )
+
     try:
         cursor.execute(query, values)
         connection.commit()
@@ -132,9 +135,9 @@ class AddBook(Resource):
     @sqlite_namespace.marshal_with(book_id)
     @utils.ip_limiter.limit_ip_access
     def post(self):
-        description = ''
-        if 'description' in sqlite_namespace.payload:
-            description = sqlite_namespace.payload['description']
+        description = ""
+        if "description" in sqlite_namespace.payload:
+            description = sqlite_namespace.payload["description"]
         id = write(
             f"INSERT INTO books (title, author, description, filepath) VALUES (?, ?, ?, ?);",
             sqlite_namespace.payload["title"],
@@ -166,8 +169,6 @@ class GetBook(Resource):
             return {"error": "Not found"}, 404
         if len(rows) > 1:
             print("SQL INJECTION???")
-            # request('POST', '/internal/log/error', json={
-            # 'message': f'SQL Injection!!'}, headers={})
             return {"error": "Internal Error"}, 500
         result = rows[0]
         book = {
@@ -178,7 +179,8 @@ class GetBook(Resource):
             "filepath": result[4],
         }
         return book, 200
-    
+
+
 update_book_model = sqlite_namespace.model(
     "UpdateBook",
     {
@@ -190,6 +192,7 @@ update_book_model = sqlite_namespace.model(
     },
 )
 
+
 @sqlite_namespace.route("/update-book/<string:id>")
 @sqlite_namespace.doc(
     responses={
@@ -199,7 +202,12 @@ update_book_model = sqlite_namespace.model(
         500: "Mapping Key Error",
     },
     description="Update a book in the database",
-    params={"id": "The book ID", "title": "The book title", "author": "The author of the book", "description": "The description of the book"},
+    params={
+        "id": "The book ID",
+        "title": "The book title",
+        "author": "The author of the book",
+        "description": "The description of the book",
+    },
 )
 class UpdateBook(Resource):
     @sqlite_namespace.expect(update_book_model)
@@ -208,7 +216,13 @@ class UpdateBook(Resource):
         title = sqlite_namespace.payload["title"]
         author = sqlite_namespace.payload["author"]
         description = sqlite_namespace.payload["description"]
-        update_rows = update("UPDATE books SET title = ?, author = ?, description = ? WHERE ID = ?", title, author, description, id)
+        update_rows = update(
+            "UPDATE books SET title = ?, author = ?, description = ? WHERE ID = ?",
+            title,
+            author,
+            description,
+            id,
+        )
         if update_rows == 0:
             return abort(404, "Book not found")
         if update_rows > 1:
@@ -283,7 +297,6 @@ class SearchBook(Resource):
     # @sqlite_namespace.marshal_with(book, as_list=True, skip_none=True)
     @utils.ip_limiter.limit_ip_access
     def get(self):
-        print('BEFORE SEARCH')
         args = keywords_parser.parse_args()
         if "keywords" not in args:
             return "No keywords provided", 400
@@ -310,7 +323,6 @@ class SearchBook(Resource):
             }
             for result in rows
         ]
-        print(results)
         return results, 200
 
 
@@ -378,10 +390,7 @@ class GetChapters(Resource):
     @sqlite_namespace.marshal_with(book_id, as_list=True, skip_none=True)
     @utils.ip_limiter.limit_ip_access
     def get(self, book_id):
-        rows = read(
-            f"SELECT * FROM chapters WHERE book_id = ?;",
-            book_id
-        )
+        rows = read(f"SELECT * FROM chapters WHERE book_id = ?;", book_id)
         if len(rows) == 0:
             return [], 404
         rows = [

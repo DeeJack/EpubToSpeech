@@ -1,7 +1,7 @@
 import io
 from flask import Flask, request, current_app, make_response, send_file
 from flask_restx import Api, Resource, abort, fields, Namespace
-import requests 
+import requests
 
 """
     This is the logic for the TTS service.
@@ -17,17 +17,20 @@ tts_model = tts_namespace.model(
             required=True, description="The text to be converted to speech"
         ),
         "service": fields.String(
-            required=True, description="The service to be used", enum=['azure', 'openai', 'elevenlabs', 'local']
-        )
+            required=True,
+            description="The service to be used",
+            enum=["azure", "openai", "elevenlabs", "local"],
+        ),
     },
 )
 
+
 def generate_tts(url, output_name, text):
-    response = requests.post(url, json={'text': text})
-    
+    response = requests.post(url, json={"text": text})
+
     if response.status_code != 200:
-        abort(response.status_code, response.json()['message'])
-    
+        abort(response.status_code, response.json()["message"])
+
     file = io.BytesIO(response.content)
     return send_file(
         file,
@@ -36,20 +39,42 @@ def generate_tts(url, output_name, text):
         download_name=output_name,
     )
 
+
 def generate_azure_tts(text):
-    return generate_tts(f"{current_app.config['API_URL']}/azure/tts", "azure_tts_output.wav", text)
+    return generate_tts(
+        f"{current_app.config['API_URL']}/azure/tts", "azure_tts_output.wav", text
+    )
+
 
 def generate_elevenlabs_tts(text):
-    return generate_tts(f"{current_app.config['API_URL']}/elevenlabs/tts", "elevenlabs_tts_output.wav", text)
+    return generate_tts(
+        f"{current_app.config['API_URL']}/elevenlabs/tts",
+        "elevenlabs_tts_output.wav",
+        text,
+    )
+
 
 def generate_local_tts(text):
-    return generate_tts(f"{current_app.config['API_URL']}/local/tts", "local_tts_output.wav", text)
+    return generate_tts(
+        f"{current_app.config['API_URL']}/local/tts", "local_tts_output.wav", text
+    )
+
 
 def generate_openai_tts(text):
-    return generate_tts(f"{current_app.config['API_URL']}/openai/tts", "openai_tts_output.wav", text)
+    return generate_tts(
+        f"{current_app.config['API_URL']}/openai/tts", "openai_tts_output.wav", text
+    )
+
 
 @tts_namespace.route("/")
-@tts_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio', params={'text': 'The text to be converted to speech', 'service': 'The service to be used'})
+@tts_namespace.doc(
+    responses={200: "OK", 400: "Invalid Argument", 500: "Mapping Key Error"},
+    description="Generate TTS audio",
+    params={
+        "text": "The text to be converted to speech",
+        "service": "The service to be used",
+    },
+)
 class TTS(Resource):
     @tts_namespace.expect(tts_model)
     def post(self):
@@ -59,13 +84,13 @@ class TTS(Resource):
         data = request.json
         text = data["text"]
         service = data["service"]
-        if service == 'azure':
+        if service == "azure":
             return generate_azure_tts(text)
-        elif service == 'openai':
+        elif service == "openai":
             return generate_openai_tts(text)
-        elif service == 'elevenlabs':
+        elif service == "elevenlabs":
             return generate_elevenlabs_tts(text)
-        elif service == 'local':
+        elif service == "local":
             return generate_local_tts(text)
         else:
             abort(400, "Invalid service")

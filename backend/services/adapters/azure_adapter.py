@@ -20,35 +20,36 @@ tts_model = azure_namespace.model(
 
 
 def generate_tts(text):
-    
-    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
-        'message': f'[AZURE GPT] Prompt: {text}'
-    })
-    
-    print(current_app.config)
-    print(current_app.config["AZURE_TTS_KEY"])
-    print(current_app.config["AZURE_TTS_REGION"])
-    print(current_app.config["AZURE_TTS_VOICE"])
-    print('---- Azure TTS ----')
+    response = requests.post(
+        f"{current_app.config['API_URL']}/log/external_api",
+        json={"message": f"[AZURE GPT] Prompt: {text}"},
+    )
+
     # https://learn.microsoft.com/it-it/azure/ai-services/speech-service/how-to-speech-synthesis?tabs=browserjs%2Cterminal&pivots=programming-language-python
     speech_config = speechsdk.SpeechConfig(
         subscription=current_app.config["AZURE_TTS_KEY"],
         region=current_app.config["AZURE_TTS_REGION"],
-        
     )
     # audio_config = speechsdk.audio.AudioOutputConfig(filename="azure_tts_output.wav")
     # "en-US-JennyNeural"
     # Voices: https://learn.microsoft.com/it-it/azure/ai-services/speech-service/language-support?tabs=tts#prebuilt-neural-voices
     speech_config.speech_synthesis_voice_name = current_app.config["AZURE_TTS_VOICE"]
-    speech_config.set_property(speechsdk.PropertyId.Speech_LogFilename, os.path.join(current_app.config["ROOT_FOLDER"], current_app.config["LOG_FOLDER"], "azure_tts.log"))
-    speech_config.set_speech_synthesis_output_format(speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm)
-    print('---- Azure TTS 2 ----')
+    speech_config.set_property(
+        speechsdk.PropertyId.Speech_LogFilename,
+        os.path.join(
+            current_app.config["ROOT_FOLDER"],
+            current_app.config["LOG_FOLDER"],
+            "azure_tts.log",
+        ),
+    )
+    speech_config.set_speech_synthesis_output_format(
+        speechsdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm
+    )
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
     # speech_config=speech_config, audio_config=stream_config)
     speech_synthesis_result = speech_synthesizer.speak_text_async(text).get()
-    print('---- Azure TTS 3 ----', speech_synthesis_result.reason, speech_synthesis_result.cancellation_details)
     if (
         speech_synthesis_result.reason
         == speechsdk.ResultReason.SynthesizingAudioCompleted
@@ -72,27 +73,31 @@ def generate_tts(text):
 
 def get_audio_buffer(speech_synthesis_result):
     stream = speechsdk.AudioDataStream(speech_synthesis_result)
-    
+
     # Create a temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     temp_file_path = temp_file.name
     temp_file.close()
-    
+
     # Save the audio to the temporary file
     stream.save_to_wav_file(temp_file_path)
-    
+
     # Read the bytes from the file
-    with open(temp_file_path, 'rb') as f:
+    with open(temp_file_path, "rb") as f:
         audio_buffer = f.read()
-    
+
     # Delete the temporary file
     os.remove(temp_file_path)
-    
+
     return audio_buffer
 
 
 @azure_namespace.route("/tts")
-@azure_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio from Azure', params={'text': 'The text to be converted to speech'})
+@azure_namespace.doc(
+    responses={200: "OK", 400: "Invalid Argument", 500: "Mapping Key Error"},
+    description="Generate TTS audio from Azure",
+    params={"text": "The text to be converted to speech"},
+)
 class TTSService(Resource):
     @azure_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access

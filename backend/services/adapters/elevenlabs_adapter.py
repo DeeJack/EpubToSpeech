@@ -18,12 +18,13 @@ tts_model = elevenlabs_namespace.model(
     },
 )
 
+
 def generate_tts(text):
-    
-    response = requests.post(f"{current_app.config['API_URL']}/log/external_api", json={
-        'message': f'[ELEVENLABS] Prompt: {text}'
-    })
-    
+    response = requests.post(
+        f"{current_app.config['API_URL']}/log/external_api",
+        json={"message": f"[ELEVENLABS] Prompt: {text}"},
+    )
+
     audio = generate(
         text=text,
         voice="Charlie",
@@ -35,27 +36,37 @@ def generate_tts(text):
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     temp_file_path = temp_file.name
     temp_file.close()
-    
+
     # Save the audio to the temporary file
     save(audio, temp_file_path)
-    
+
     # Read the bytes from the file
-    with open(temp_file_path, 'rb') as f:
+    with open(temp_file_path, "rb") as f:
         audio_buffer = f.read()
-    
+
     # Delete the temporary file
     os.remove(temp_file_path)
-    
+
     return audio_buffer
-    
+
     # return stream(audio)
 
+
 @elevenlabs_namespace.route("/tts")
-@elevenlabs_namespace.doc(responses={200: 'OK', 400: 'Invalid Argument', 500: 'Mapping Key Error'}, description='Generate TTS audio from Elevenlabs', params={'text': 'The text to be converted to speech'})
+@elevenlabs_namespace.doc(
+    responses={200: "OK", 400: "Invalid Argument", 500: "Mapping Key Error"},
+    description="Generate TTS audio from Elevenlabs",
+    params={"text": "The text to be converted to speech"},
+)
 class TTS(Resource):
     @elevenlabs_namespace.expect(tts_model)
     @utils.ip_limiter.limit_ip_access
     def post(self):
         data = request.get_json()
         text = data["text"]
-        return send_file(io.BytesIO(generate_tts(text)), mimetype="audio/wav", as_attachment=True, download_name="elevenlabs_tts_output.wav") 
+        return send_file(
+            io.BytesIO(generate_tts(text)),
+            mimetype="audio/wav",
+            as_attachment=True,
+            download_name="elevenlabs_tts_output.wav",
+        )
