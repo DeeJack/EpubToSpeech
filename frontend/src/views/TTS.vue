@@ -15,8 +15,9 @@
                 </v-data-table>
 
                 <div class="center">
-                    <v-btn color="primary" type="submit">Generate TTS</v-btn>
+                    <v-btn color="primary" type="submit" :disabled="loading">Generate TTS</v-btn>
                 </div>
+                <v-progress-linear v-if="loading" indeterminate color="blue"></v-progress-linear>
             </v-form>
 
             <div v-for="(audio, index) in downloadedChapters" :key="index" class="audiobox">
@@ -34,6 +35,7 @@ let service = ref(null);
 let services = ['Azure', 'OpenAI', 'ElevenLabs', 'Local'];
 let form = ref(null);
 let valid = ref(false);
+let loading = ref(false);
 
 let downloadedChapters = ref([]);
 
@@ -52,7 +54,8 @@ export default {
             services,
             service,
             valid,
-            downloadedChapters
+            downloadedChapters,
+            loading
         }
     },
     created() {
@@ -85,6 +88,7 @@ export default {
         async createRequest() {
             // this.valid = this.$refs.form.validate();
             console.log(valid.value)
+            loading.value = true;
             if (!valid.value) {
                 return;
             }
@@ -110,6 +114,7 @@ export default {
                     console.log(response);
                 }
             }
+            loading.value = false;
         }
     }
 }

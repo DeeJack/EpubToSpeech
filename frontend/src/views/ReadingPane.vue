@@ -2,9 +2,9 @@
     <v-main style="padding: 0">
         <v-container>
             <v-row>
-                <v-col cols="12" >
-                    <v-select v-model="chapter" :items="chapters" item-value="id" item-title="name" label="Chapter"
-                        outlined @update:model-value="changeChapter()"></v-select>
+                <v-col cols="12">
+                    <v-select v-model="chapter" :items="chapters" item-value="id" item-title="name" label="Chapter" outlined
+                        @update:model-value="changeChapter()"></v-select>
                 </v-col>
 
             </v-row>
@@ -16,12 +16,13 @@
 
                 <v-col cols="12" md="6">
                     <div class="buttons">
-                        <v-btn color="primary" @click="translate" :title="translateTooltip">Translate</v-btn>
-                        <v-btn color="primary" @click="summarize" :title="summarizeTooltip">Summarize</v-btn>
+                        <v-btn :disabled="loading" color="primary" @click="translate" :title="translateTooltip">Translate</v-btn>
+                        <v-btn :disabled="loading" color="primary" @click="summarize" :title="summarizeTooltip">Summarize</v-btn>
                         <!-- <v-btn color="primary" @click="trivia" :title="triviaTooltip">Trivia</v-btn>-->
-                        <v-btn color="primary" @click="generateImage" :title="generateImageTooltip">Generate Image</v-btn>
-                        <v-btn color="primary" @click="customPrompt" :title="customPromptTooltip">Custom Prompt</v-btn>
+                        <v-btn :disabled="loading" color="primary" @click="generateImage" :title="generateImageTooltip">Generate Image</v-btn>
+                        <v-btn :disabled="loading" color="primary" @click="customPrompt" :title="customPromptTooltip">Custom Prompt</v-btn>
                     </div>
+                    <v-progress-linear v-if="loading" indeterminate color="blue"></v-progress-linear>
 
                     <v-text-field v-model="prompt" label="Custom Prompt"></v-text-field>
                     <v-textarea v-model="selectedText" label="Selected text" readonly></v-textarea>
@@ -48,9 +49,10 @@ let summarizeTooltip = ref('Summarize the entire text');
 let triviaTooltip = ref('Generate trivia from the chapter');
 // let chapterTextara = ref(null);
 let selectedText = ref('');
+let loading = ref(false);
 
 let id = ref(0);
-let chapter = {id: 0, name: ''};
+let chapter = { id: 0, name: '' };
 let chapters = []
 
 const getSelectedText = () => {
@@ -81,7 +83,8 @@ export default {
             triviaTooltip,
             selectedText,
             chapters,
-            chapter
+            chapter,
+            loading
         };
     },
     created() {
@@ -95,19 +98,19 @@ export default {
         });
 
         axios.get(`http://localhost:5000/api/reader/chapters/${this.id}`)
-        .then((response) => {
-            let index = 0;
-            this.chapters = response.data.map((chapter) => {
-                return {
-                    id: index++,
-                    name: this.getChapterName(chapter),
-                }
+            .then((response) => {
+                let index = 0;
+                this.chapters = response.data.map((chapter) => {
+                    return {
+                        id: index++,
+                        name: this.getChapterName(chapter),
+                    }
+                });
+                this.chapter = this.chapters[0].id;
+                console.log(chapters.value)
+            }).catch((error) => {
+                console.log(error);
             });
-            this.chapter = this.chapters[0].id;
-            console.log(chapters.value)
-        }).catch((error) => {
-            console.log(error);
-        });
         // text.value = 'This is a test text';
     },
     methods: {
@@ -118,40 +121,52 @@ export default {
             document.removeEventListener('selectionchange', selectionListener)
         },
         customPrompt() {
+            loading.value = true;
             axios.post(`http://localhost:5000/api/reader/generate/${this.id}/${this.chapter}`, {
                 prompt: this.prompt,
             }).then((response) => {
+                loading.value = false;
                 console.log(response.data)
                 result.value = response.data.text;
             }).catch((error) => {
+                loading.value = false;
                 console.log(error);
             });
         },
         summarize() {
+            loading.value = true;
             axios.post(`http://localhost:5000/api/reader/summarize/${this.id}/${this.chapter}`)
                 .then((response) => {
+                    loading.value = false;
                     console.log(response.data)
                     result.value = response.data.text;
                 }).catch((error) => {
+                    loading.value = false;
                     console.log(error);
                 });
         },
         translate() {
+            loading.value = true;
             axios.post(`http://localhost:5000/api/reader/translate/${this.id}/${this.chapter}`)
                 .then((response) => {
+                    loading.value = false;
                     console.log(response.data)
                     result.value = response.data.text;
                 }).catch((error) => {
+                    loading.value = false;
                     console.log(error);
                 });
         },
         generateImage() {
+            loading.value = true;
             axios.post(`http://localhost:5000/api/reader/image/`, {
                 prompt: getSelectedText(),
             }).then((response) => {
+                loading.value = false;
                 console.log(response.data)
                 result.value = response.data.image;
             }).catch((error) => {
+                loading.value = false;
                 console.log(error);
             });
         },
