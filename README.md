@@ -6,7 +6,7 @@ This project is a web application where users can upload Epub files and use vari
 
 - Frontend: VueJS with Vuetify
 - Backend: Python with Flask
-- Supported TTS Services: Azure, OpenAI, ElevenLabs, and a local one
+- Supported TTS Services: Azure, OpenAI, ElevenLabs, and a local one (espeak for linux)
 
 ## Getting Started
 
@@ -65,3 +65,11 @@ This project is a web application where users can upload Epub files and use vari
 ## Search
 
 ![Search](images/search.jpeg)
+
+## Examples
+
+![Example](images/example.gif)
+
+## Search vid
+
+![Search vid](images/search.gif)
