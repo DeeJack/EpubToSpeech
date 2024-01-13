@@ -28,6 +28,14 @@ This project is a web application where users can upload Epub files and use vari
    docker-compose up --build
    ```
 
+## URL
+
+Frontend: http://localhost:4173/
+
+Backend: http://localhost:5000/api/
+
+Docs: http://localhost:5000/docs
+
 ## Usage
 
 1. Navigate to the home page and upload an Epub file.
