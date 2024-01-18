@@ -15,8 +15,9 @@ engine = None
 def initialize_tts():
     global engine
     global INITIALIZED
+    print('Initializing')
     engine = pyttsx3.init()
-    INITIALIZED = True
+    # INITIALIZED = True
 
 
 def local_tts(text):
@@ -24,7 +25,9 @@ def local_tts(text):
     global INITIALIZED
     if not INITIALIZED:
         initialize_tts()
-    buffer = get_audio_buffer(engine, text)
+    # engine = pyttsx3.init()
+    buffer = get_audio_buffer(text)
+    print('sending')
     return send_file(
         io.BytesIO(buffer),
         mimetype="audio/wav",
@@ -33,7 +36,9 @@ def local_tts(text):
     )
 
 
-def get_audio_buffer(engine, text):
+def get_audio_buffer(text):
+    global engine
+    global INITIALIZED
     # Create a temporary file
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
     temp_file_path = temp_file.name
@@ -41,17 +46,22 @@ def get_audio_buffer(engine, text):
 
     # Save the audio to the temporary file
     os.remove(temp_file_path)
+    print('Generating', text, temp_file_path )
     engine.save_to_file(text, temp_file_path)
+    print('Waiting')
     engine.runAndWait()
+    print('Waiting not working shit')
 
     times = 0
-    while times < 15 and os.path.basename(temp_file_path) not in os.listdir(
-        os.path.dirname(temp_file_path)
-    ):
+    MAX_TRIES = 10
+    while times < MAX_TRIES and not os.path.exists(temp_file_path):
+        engine.save_to_file(text, temp_file_path)
+        engine.runAndWait()
         times += 1
         sleep(0.5)
+    print('Done in ', times)
 
-    if times == 15:
+    if times == MAX_TRIES:
         return abort(500, message="Error creating the audio file!")
 
     # Read the bytes from the file
@@ -61,6 +71,8 @@ def get_audio_buffer(engine, text):
     # Delete the temporary file
     os.remove(temp_file_path)
     engine.stop()
+    engine = None
+    INITIALIZED = False
 
     return audio_buffer
 
@@ -88,6 +100,8 @@ class TTSService(Resource):
         """Convert text to speech"""
         data = request.json
         text = data["text"]
+        
+        print('Starting local')
 
         # Checks result.
         return local_tts(text)

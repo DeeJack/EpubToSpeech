@@ -106,7 +106,7 @@ export default {
                         'chapter': chapterNumber,
                         'service': service.value.toLowerCase(),
                         'book_id': id
-                    }, { responseType: 'arraybuffer', timeout: 5000 })
+                    }, { responseType: 'arraybuffer', timeout: 60000 })
                 } catch (error) {
                     console.log(error);
                     alert('Error generating TTS')
