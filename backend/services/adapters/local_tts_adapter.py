@@ -14,12 +14,14 @@ engine = None
 
 def initialize_tts():
     global engine
+    global INITIALIZED
     engine = pyttsx3.init()
     INITIALIZED = True
 
 
 def local_tts(text):
     global engine
+    global INITIALIZED
     if not INITIALIZED:
         initialize_tts()
     buffer = get_audio_buffer(engine, text)

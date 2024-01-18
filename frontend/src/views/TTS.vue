@@ -62,6 +62,8 @@ export default {
         this.downloadedChapters = [];
         let args = this.$route.query;
         let id = args.id;
+        this.loading = false;
+        this.service = null
         // Fetch chapters from server
         axios.get(`http://localhost:5000/api/reader/chapters/${id}`)
             .then((response) => {
@@ -87,31 +89,39 @@ export default {
     methods: {
         async createRequest() {
             // this.valid = this.$refs.form.validate();
-            console.log(valid.value)
-            loading.value = true;
-            if (!valid.value) {
+            if (!valid.value || !service.value) {
                 return;
             }
+            loading.value = true;
             let selectedChapters = chapters.value.filter((chapter) => chapter.selected);
             let chapterNumbers = selectedChapters.map((chapter) => chapter.number);
             let args = this.$route.query;
             let id = args.id;
-            let service = this.service;
             console.log(chapterNumbers, id, service)
             for (let chapterNumber of chapterNumbers) {
-                console.log(chapterNumber)
-                let response = await axios.post(`http://localhost:5000/api/tts/`, {
-                    'chapter': chapterNumber,
-                    'service': service.toLowerCase(),
-                    'book_id': id
-                }, { responseType: 'arraybuffer', timeout: 60000 })
+                console.log(service)
+                let response = null
+                try {
+                    response = await axios.post(`http://localhost:5000/api/tts/`, {
+                        'chapter': chapterNumber,
+                        'service': service.value.toLowerCase(),
+                        'book_id': id
+                    }, { responseType: 'arraybuffer', timeout: 5000 })
+                } catch (error) {
+                    console.log(error);
+                    alert('Error generating TTS')
+                    loading.value = false;
+                    return
+                }
                 if (response.status == 200) {
                     // console.log(response.data);
                     const blob = new Blob([response.data], { type: 'audio/wav' });
                     const url = URL.createObjectURL(blob);
                     downloadedChapters.value.push({ url: url, chapter: chapterNumber });
                 } else {
+                    alert('Error generating TTS')
                     console.log(response);
+                    loading.value = false;
                 }
             }
             loading.value = false;
@@ -129,7 +139,7 @@ export default {
 }
 
 .audiobox {
-    margin: 10px;   
+    margin: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
